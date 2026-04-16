@@ -1,7 +1,8 @@
-DROP DATABASE IF EXISTS luigimotors;
+DROP DATABASE IF EXISTS luigimotors; -- depurar la base de datos
 CREATE DATABASE IF NOT EXISTS luigimotors;
 USE luigimotors;
 
+-- crear las tablas
 CREATE TABLE cliente (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
     dni VARCHAR(9) UNIQUE NOT NULL,
@@ -21,3 +22,18 @@ CREATE TABLE reparacion (
     id_cliente INT,
     FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente) ON DELETE CASCADE
 );
+
+-- insertar datos en las tablas
+INSERT INTO Cliente (dni, nombre, telefono, password, rol) VALUES 
+('12345678A', 'Admin Mecánico', '600111222', 'admin123', 'Administrador'),
+('87654321B', 'Soraya', '600333444', 'cliente1', 'Cliente'),
+('11223344C', 'Carlos', '600555666', 'cliente2', 'Cliente');
+
+INSERT INTO Reparacion (matricula, descripcion, coste, fecha_ingreso, estado, id_cliente) VALUES 
+('1234ABC', 'Cambio de aceite y filtros', 120.50, '2023-10-01', 'Terminado', 2),
+('1234ABC', 'Sustitución pastillas de freno', 85.00, '2023-10-15', 'Terminado', 2),
+('9876XYZ', 'Reparación tubo de escape', 250.00, '2023-11-02', 'Terminado', 3),
+('9876XYZ', 'Revisión pre-ITV', 50.00, '2023-11-20', 'Pendiente', 3),
+('1234ABC', 'Cambio de neumáticos', 300.00, '2023-11-22', 'Pendiente', 2),
+('5555DEF', 'Alineación de dirección', 45.00, '2023-11-25', 'Terminado', 2),
+('5555DEF', 'Sustitución batería', 90.00, '2023-11-26', 'Pendiente', 2);
