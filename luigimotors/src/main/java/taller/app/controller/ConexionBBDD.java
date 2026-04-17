@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import taller.app.model.Cliente;
+import taller.app.model.Reparacion;
 
 public class ConexionBBDD {
 
@@ -82,8 +84,7 @@ public class ConexionBBDD {
                                 resultset.getString("nombre"),
                                 resultset.getString("telefono"),
                                 resultset.getString("contrasenya"),
-                                resultset.getString("rol")
-                        );
+                                resultset.getString("rol"));
                         System.out.println(cliente.toString());
                     }
 
