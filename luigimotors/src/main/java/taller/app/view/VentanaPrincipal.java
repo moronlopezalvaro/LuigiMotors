@@ -8,5 +8,8 @@ public class VentanaPrincipal extends JFrame {
         setSize(500, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        
+        Menu menu = new Menu();
+        setContentPane(menu);
     }
 }
