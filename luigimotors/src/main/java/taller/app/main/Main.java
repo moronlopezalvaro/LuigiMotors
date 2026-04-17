@@ -17,6 +17,8 @@ public class Main {
             cn = conexion.conectar();
             conexion.insertData();
             conexion.getData();
+            conexion.insertDataReparacion();
+            conexion.getDataReparacion();
         } catch (SQLException e) {
             e.printStackTrace();
         }

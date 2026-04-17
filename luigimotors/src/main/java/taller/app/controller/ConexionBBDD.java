@@ -99,5 +99,59 @@ public class ConexionBBDD {
             }
         }
     }
+    public void insertDataReparacion() throws SQLException {
+        Connection conexion = conectar();
+        try {
+            // Datos a insertar
+            String consultasInserccion = "INSERT INTO reparacion (matricula, descripcion, coste, fecha_ingreso, estado, id_cliente) VALUES ('1234ABC', 'Cambio de aceite', 50.0, '2024-05-10', 'Terminado', 2);";
+            System.out.println(consultasInserccion);
+            // Creación del Statement para poder realizar la consulta
+            Statement consul = conexion.createStatement();
+            // Ejecución de la consulta
+            consul.executeUpdate(consultasInserccion);
+            System.out.println("Datos de reparación insertados correctamente");
+            // Cierre del Statement
+            consul.close();
+        } finally {
+            // Cierre de la conexión
+            cerrarConexion(conexion);
+        }
+    }
+
+    public void getDataReparacion() throws SQLException {
+        Connection conexion = conectar();
+
+        if (conexion != null) {
+            try {
+                // Datos a consultar
+                String consultasSeleccion = "SELECT * FROM reparacion";
+                System.out.println(consultasSeleccion);
+                Statement consul = conexion.createStatement();
+                // Ejecución de la consulta
+                if (consul.execute(consultasSeleccion)) {
+                    ResultSet resultset = consul.getResultSet();
+                    while (resultset.next()) {
+                        Reparacion reparacion = new Reparacion(
+                                resultset.getInt("id_reparacion"),
+                                resultset.getString("matricula"),
+                                resultset.getString("descripcion"),
+                                resultset.getDouble("coste"),
+                                resultset.getString("fecha_ingreso"),
+                                resultset.getString("estado"),
+                                resultset.getInt("id_cliente"));
+                        System.out.println(reparacion.toString());
+                    }
+
+                    System.out.println("Datos de reparación recuperados correctamente");
+                }
+                // Cierre del Statement
+                consul.close();
+
+            } finally {
+                // Cierre de la conexión
+                cerrarConexion(conexion);
+            }
+        }
+    }
 
 }
