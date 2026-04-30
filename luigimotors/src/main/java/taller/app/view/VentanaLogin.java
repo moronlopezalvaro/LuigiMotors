@@ -24,16 +24,9 @@ public class VentanaLogin extends JPanel {
         // Layout principal
         setLayout(new BorderLayout());
 
-        // Título
-        JLabel lblTitulo = new JLabel("Bienvenido a Luigi Motors");
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitulo.setHorizontalAlignment(JLabel.CENTER);
-        lblTitulo.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(lblTitulo, BorderLayout.NORTH);
-
         // Pestañas
         JTabbedPane tabbedPane = new JTabbedPane();
-        
+
         // Pestaña Iniciar Sesión
         JPanel panelLogin = crearPanelLogin();
         tabbedPane.addTab("Iniciar Sesión", panelLogin);
@@ -48,14 +41,41 @@ public class VentanaLogin extends JPanel {
 
     // Panel iniciar sesión
     private JPanel crearPanelLogin() {
-        // Layout en cuadrícula
+        // Contenedor principal con imagen de fondo
+        JPanel contenedor = new JPanel(new GridBagLayout()) {
+            private java.awt.Image bgImage;
+            {
+                try {
+                    java.net.URL imgUrl = getClass().getResource("/taller/app/resources/FotoLogIn.jpg");
+                    if (imgUrl != null) {
+                        bgImage = new javax.swing.ImageIcon(imgUrl).getImage();
+                    }
+                } catch (Exception ex) {
+                    System.err.println("No se pudo cargar la imagen de login");
+                }
+            }
+
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                super.paintComponent(g);
+                if (bgImage != null) {
+                    g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+
+        // Layout en cuadrícula para el formulario (fondo transparente)
         JPanel panel = new JPanel(new GridBagLayout());
+        panel.setOpaque(false);
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(150, 20, 20, 20));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Nombre
         JLabel lblNombre = new JLabel("Nombre:");
+        lblNombre.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(lblNombre, gbc);
@@ -67,6 +87,7 @@ public class VentanaLogin extends JPanel {
 
         // Contraseña
         JLabel lblContrasena = new JLabel("Contraseña:");
+        lblContrasena.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(lblContrasena, gbc);
@@ -93,7 +114,8 @@ public class VentanaLogin extends JPanel {
 
                 // Comprobar vacíos
                 if (nombre.isEmpty() || contrasena.isEmpty()) {
-                    JOptionPane.showMessageDialog(panel, "Por favor, rellene todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(contenedor, "Por favor, rellene todos los campos.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -104,61 +126,102 @@ public class VentanaLogin extends JPanel {
                 if (exito) {
                     avanzarPantallaBienvenida(nombre);
                 } else {
-                    JOptionPane.showMessageDialog(panel, "Nombre o contraseña incorrectos.", "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(contenedor, "Nombre o contraseña incorrectos.",
+                            "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        return panel;
+        contenedor.add(panel);
+        return contenedor;
     }
 
     // Panel registro
     private JPanel crearPanelRegistro() {
-        // Layout en cuadrícula
+        // Contenedor principal con imagen de fondo
+        JPanel contenedor = new JPanel(new GridBagLayout()) {
+            private java.awt.Image bgImage;
+            {
+                try {
+                    java.net.URL imgUrl = getClass().getResource("/taller/app/resources/FotoLogIn.jpg");
+                    if (imgUrl != null) {
+                        bgImage = new javax.swing.ImageIcon(imgUrl).getImage();
+                    }
+                } catch (Exception ex) {
+                    System.err.println("No se pudo cargar la imagen de registro");
+                }
+            }
+
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                super.paintComponent(g);
+                if (bgImage != null) {
+                    g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+
+        // Layout en cuadrícula para el formulario (fondo transparente)
         JPanel panel = new JPanel(new GridBagLayout());
+        panel.setOpaque(false);
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(150, 20, 20, 20));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // DNI
         JLabel lblDni = new JLabel("DNI:");
-        gbc.gridx = 0; gbc.gridy = 0;
+        lblDni.setForeground(java.awt.Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         panel.add(lblDni, gbc);
 
         JTextField txtDni = new JTextField(20);
-        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
         panel.add(txtDni, gbc);
 
         // Nombre
         JLabel lblNombre = new JLabel("Nombre:");
-        gbc.gridx = 0; gbc.gridy = 1;
+        lblNombre.setForeground(java.awt.Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         panel.add(lblNombre, gbc);
 
         JTextField txtNombre = new JTextField(20);
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
         panel.add(txtNombre, gbc);
 
         // Teléfono
         JLabel lblTelefono = new JLabel("Teléfono:");
-        gbc.gridx = 0; gbc.gridy = 2;
+        lblTelefono.setForeground(java.awt.Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         panel.add(lblTelefono, gbc);
 
         JTextField txtTelefono = new JTextField(20);
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
         panel.add(txtTelefono, gbc);
 
         // Contraseña
         JLabel lblContrasena = new JLabel("Contraseña:");
-        gbc.gridx = 0; gbc.gridy = 3;
+        lblContrasena.setForeground(java.awt.Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         panel.add(lblContrasena, gbc);
 
         JPasswordField txtContrasena = new JPasswordField(20);
-        gbc.gridx = 1; gbc.gridy = 3;
+        gbc.gridx = 1;
+        gbc.gridy = 3;
         panel.add(txtContrasena, gbc);
 
         // Botón
         JButton btnRegistrar = new JButton("Registrar");
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         panel.add(btnRegistrar, gbc);
 
@@ -174,7 +237,8 @@ public class VentanaLogin extends JPanel {
 
                 // Comprobar vacíos
                 if (dni.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || contrasena.isEmpty()) {
-                    JOptionPane.showMessageDialog(panel, "Por favor, rellene todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(contenedor, "Por favor, rellene todos los campos.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -183,15 +247,19 @@ public class VentanaLogin extends JPanel {
                 boolean exito = bd.registrarNuevoCliente(dni, nombre, telefono, contrasena);
 
                 if (exito) {
-                    JOptionPane.showMessageDialog(panel, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(contenedor, "Usuario registrado correctamente.", "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE);
                     avanzarPantallaBienvenida(nombre);
                 } else {
-                    JOptionPane.showMessageDialog(panel, "Error al registrar el usuario en la BD.\nAsegúrate de que el DNI no esté duplicado.", "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(contenedor,
+                            "Error al registrar el usuario en la BD.\nAsegúrate de que el DNI no esté duplicado.",
+                            "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        return panel;
+        contenedor.add(panel);
+        return contenedor;
     }
 
     // Cambiar a pantalla principal (VentanaInicial)
