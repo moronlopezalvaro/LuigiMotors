@@ -32,8 +32,8 @@ CREATE TABLE usuarios (
 -- insertar datos en las tablas
 INSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES 
 ('12345678A', 'Admin Mecánico', '600111222', 'admin123', 'Administrador'),
-('87654321B', 'Soraya', '600333444', 'cliente1', 'Cliente'),
-('11223344C', 'Carlos', '600555666', 'cliente2', 'Cliente');
+('87654321B', 'Manuel', '600333444', 'cliente1', 'Cliente'),
+('11223344C', 'Álvaro', '600555666', 'cliente2', 'Cliente');
 
 INSERT INTO Reparacion (matricula, descripcion, coste, fecha_ingreso, estado, id_cliente) VALUES 
 ('1234ABC', 'Cambio de aceite y filtros', 120.50, '2023-10-01', 'Terminado', 2),

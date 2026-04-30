@@ -5,6 +5,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.File;
 import taller.app.model.Cliente;
 import taller.app.model.Reparacion;
 
@@ -154,21 +159,28 @@ public class ConexionBBDD {
         }
     }
 
-    public boolean registrarUsuario(String correo, String contrasena) {
+    // Comprobar login
+    public boolean validarLoginCliente(String nombre, String contrasena) {
         Connection conexion = conectar();
         if (conexion != null) {
             try {
-                String consulta = "INSERT INTO usuarios (correo_electronico, contrasenya_usuario) VALUES (?, ?)";
-                java.sql.PreparedStatement pstmt = conexion.prepareStatement(consulta);
-                pstmt.setString(1, correo);
+                // Consulta SELECT
+                String consulta = "SELECT * FROM cliente WHERE nombre = ? AND contrasenya = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, nombre);
                 pstmt.setString(2, contrasena);
                 
-                int filasAfectadas = pstmt.executeUpdate();
+                // Ejecutar y ver si existe
+                ResultSet rs = pstmt.executeQuery();
+                boolean existe = rs.next();
+                
+                // Cerrar
+                rs.close();
                 pstmt.close();
                 
-                return filasAfectadas > 0;
+                return existe;
             } catch (SQLException e) {
-                System.out.println("Error al registrar usuario");
+                System.out.println("Error al validar login de cliente");
                 e.printStackTrace();
                 return false;
             } finally {
@@ -176,5 +188,64 @@ public class ConexionBBDD {
             }
         }
         return false;
+    }
+
+    // Registrar nuevo usuario
+    public boolean registrarNuevoCliente(String dni, String nombre, String telefono, String contrasena) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                // Consulta INSERT
+                String consulta = "INSERT INTO cliente (dni, nombre, telefono, contrasenya, rol) VALUES (?, ?, ?, ?, 'Cliente')";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, dni);
+                pstmt.setString(2, nombre);
+                pstmt.setString(3, telefono);
+                pstmt.setString(4, contrasena);
+                
+                // Ejecutar
+                int filasAfectadas = pstmt.executeUpdate();
+                pstmt.close();
+                
+                if (filasAfectadas > 0) {
+                    // Guardar también en archivo .sql
+                    guardarEnArchivoSQL(dni, nombre, telefono, contrasena);
+                    return true;
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al registrar cliente");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
+
+    // Escribir en el archivo database.sql
+    private void guardarEnArchivoSQL(String dni, String nombre, String telefono, String contrasena) {
+        // Buscar el archivo
+        String baseDir = System.getProperty("user.dir");
+        File archivoSQL = new File(baseDir, "database.sql");
+        if (!archivoSQL.exists()) {
+            archivoSQL = new File(baseDir, "luigimotors/database.sql");
+        }
+        if (!archivoSQL.exists()) {
+            archivoSQL = new File("c:/Users/iLERNA/OneDrive - Ilerna/Programación/Trimestre 3/Actividad 8/PROYECTO-FINAL-PROG/luigimotors/database.sql");
+        }
+        
+        // Escribir al final del archivo
+        try (FileWriter fw = new FileWriter(archivoSQL, true);
+             BufferedWriter bw = new BufferedWriter(fw)) {
+            
+            // Texto a insertar
+            String insert = String.format("\nINSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES \n('%s', '%s', '%s', '%s', 'Cliente');",
+                    dni, nombre, telefono, contrasena);
+            bw.write(insert);
+            System.out.println("Guardado en database.sql correctamente.");
+        } catch (IOException e) {
+            System.out.println("No se pudo escribir en el archivo database.sql");
+            e.printStackTrace();
+        }
     }
 }
