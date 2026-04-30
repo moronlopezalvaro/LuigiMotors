@@ -25,7 +25,7 @@ public class Menu extends JPanel {
         JButton btnAdelante = new JButton(new ImageIcon(imgBtn));
 
         // Posicionar el botón en la parte inferior centrada
-        btnAdelante.setBounds(70, 570, 300, 120);
+        btnAdelante.setBounds(82, 570, 300, 120);
         btnAdelante.setContentAreaFilled(false); // Hacer el fondo transparente
         btnAdelante.setBorderPainted(false); // Quitar el borde
         btnAdelante.setFocusPainted(false); // Quitar la línea al seleccionarlo
