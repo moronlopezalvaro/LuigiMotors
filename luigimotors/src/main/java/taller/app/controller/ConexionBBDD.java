@@ -248,4 +248,91 @@ public class ConexionBBDD {
             e.printStackTrace();
         }
     }
+
+    // Obtener ID del cliente por nombre
+    public int obtenerIdCliente(String nombre) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT id_cliente FROM cliente WHERE nombre = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, nombre);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    int id = rs.getInt("id_cliente");
+                    rs.close();
+                    pstmt.close();
+                    return id;
+                }
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al obtener ID del cliente");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return -1;
+    }
+
+    // Comprobar si una cita está ocupada en esa fecha y hora
+    public boolean citaOcupada(String fecha, String hora) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT COUNT(*) FROM citas WHERE fecha = ? AND hora = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, fecha);
+                pstmt.setString(2, hora);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    boolean ocupada = rs.getInt(1) > 0;
+                    rs.close();
+                    pstmt.close();
+                    return ocupada;
+                }
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al comprobar disponibilidad de cita");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
+
+    // Guardar una nueva cita
+    public boolean guardarCita(String fecha, String hora, String matricula, String descripcion, String nombreCliente) {
+        int idCliente = obtenerIdCliente(nombreCliente);
+        if (idCliente == -1) {
+            System.out.println("No se encontró el cliente: " + nombreCliente);
+            return false;
+        }
+
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "INSERT INTO citas (fecha, hora, matricula, descripcion, id_cliente) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, fecha);
+                pstmt.setString(2, hora);
+                pstmt.setString(3, matricula);
+                pstmt.setString(4, descripcion);
+                pstmt.setInt(5, idCliente);
+
+                int filasAfectadas = pstmt.executeUpdate();
+                pstmt.close();
+                return filasAfectadas > 0;
+            } catch (SQLException e) {
+                System.out.println("Error al guardar la cita");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
 }

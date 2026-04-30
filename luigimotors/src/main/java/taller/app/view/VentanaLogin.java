@@ -102,7 +102,7 @@ public class VentanaLogin extends JPanel {
                 boolean exito = bd.validarLoginCliente(nombre, contrasena);
 
                 if (exito) {
-                    avanzarPantallaBienvenida();
+                    avanzarPantallaBienvenida(nombre);
                 } else {
                     JOptionPane.showMessageDialog(panel, "Nombre o contraseña incorrectos.", "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
                 }
@@ -184,7 +184,7 @@ public class VentanaLogin extends JPanel {
 
                 if (exito) {
                     JOptionPane.showMessageDialog(panel, "Usuario registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    avanzarPantallaBienvenida();
+                    avanzarPantallaBienvenida(nombre);
                 } else {
                     JOptionPane.showMessageDialog(panel, "Error al registrar el usuario en la BD.\nAsegúrate de que el DNI no esté duplicado.", "Error de Base de Datos", JOptionPane.ERROR_MESSAGE);
                 }
@@ -195,10 +195,10 @@ public class VentanaLogin extends JPanel {
     }
 
     // Cambiar a pantalla principal (VentanaInicial)
-    private void avanzarPantallaBienvenida() {
+    private void avanzarPantallaBienvenida(String nombreCliente) {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {
-            frame.setContentPane(new VentanaInicial());
+            frame.setContentPane(new VentanaInicial(nombreCliente));
             frame.revalidate();
             frame.repaint();
         }

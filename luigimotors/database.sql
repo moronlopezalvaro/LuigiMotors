@@ -29,6 +29,17 @@ CREATE TABLE usuarios (
     contrasenya_usuario VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE citas (
+    id_cita INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    hora VARCHAR(5) NOT NULL,
+    matricula VARCHAR(10) NOT NULL,
+    descripcion TEXT NOT NULL,
+    id_cliente INT,
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente) ON DELETE CASCADE,
+    UNIQUE(fecha, hora)
+);
+
 -- insertar datos en las tablas
 INSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES 
 ('12345678A', 'Admin Mecánico', '600111222', 'admin123', 'Administrador'),
