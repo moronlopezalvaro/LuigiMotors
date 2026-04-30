@@ -194,17 +194,11 @@ public class VentanaLogin extends JPanel {
         return panel;
     }
 
-    // Cambiar a pantalla bienvenida
+    // Cambiar a pantalla principal (VentanaInicial)
     private void avanzarPantallaBienvenida() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {
-            JPanel panelPrincipal = new JPanel();
-            panelPrincipal.setLayout(new GridBagLayout());
-            JLabel lblBienvenido = new JLabel("¡Bienvenido a Luigi Motors!");
-            lblBienvenido.setFont(new Font("Arial", Font.BOLD, 24));
-            panelPrincipal.add(lblBienvenido);
-
-            frame.setContentPane(panelPrincipal);
+            frame.setContentPane(new VentanaInicial());
             frame.revalidate();
             frame.repaint();
         }
