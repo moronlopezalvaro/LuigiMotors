@@ -24,19 +24,27 @@ public class VentanaInicial extends JPanel {
         setLayout(new BorderLayout());
 
         // ===== TÍTULO CON RECUADRO =====
-        JLabel lblTitulo = new JLabel("Luigi Motors", JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
-        lblTitulo.setOpaque(true);
-        lblTitulo.setBackground(new Color(240, 240, 240));
-        // Borde compuesto: línea exterior + padding interior
-        lblTitulo.setBorder(BorderFactory.createCompoundBorder(
+        JPanel panelTitulo = new JPanel(new BorderLayout());
+        panelTitulo.setOpaque(true);
+        panelTitulo.setBackground(new Color(240, 240, 240));
+        panelTitulo.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createCompoundBorder(
                 BorderFactory.createEmptyBorder(15, 20, 10, 20),   // margen exterior
                 BorderFactory.createLineBorder(Color.DARK_GRAY, 2) // recuadro
             ),
-            BorderFactory.createEmptyBorder(15, 20, 15, 20)        // padding interior
+            BorderFactory.createEmptyBorder(15, 20, 5, 20)        // padding interior (ajustado en la parte inferior)
         ));
-        add(lblTitulo, BorderLayout.NORTH);
+
+        JLabel lblTitulo = new JLabel("Luigi Motors", JLabel.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
+        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
+
+        JLabel lblBienvenido = new JLabel("Bienvenido " + nombreCliente);
+        lblBienvenido.setFont(new Font("Arial", Font.ITALIC, 14));
+        lblBienvenido.setForeground(Color.DARK_GRAY);
+        panelTitulo.add(lblBienvenido, BorderLayout.SOUTH);
+
+        add(panelTitulo, BorderLayout.NORTH);
 
         // ===== PANEL DE BOTONES =====
         JPanel panelBotones = new JPanel(new GridLayout(3, 1, 0, 20));
