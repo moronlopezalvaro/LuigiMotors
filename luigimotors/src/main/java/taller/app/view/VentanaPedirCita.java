@@ -18,6 +18,11 @@ import java.awt.Insets;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import taller.app.controller.ConexionBBDD;
@@ -29,19 +34,34 @@ public class VentanaPedirCita extends JPanel {
     public VentanaPedirCita(String nombreCliente) {
         this.nombreCliente = nombreCliente;
         setLayout(new BorderLayout());
+        setOpaque(false); // Para el fondo degradado
 
         // ===== TÍTULO =====
+        JPanel panelTitulo = new JPanel(new BorderLayout());
+        panelTitulo.setOpaque(true);
+        panelTitulo.setBackground(Color.decode("#1E3A5F"));
+        panelTitulo.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(15, 20, 10, 20),
+                BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)
+            ),
+            BorderFactory.createEmptyBorder(15, 20, 15, 20)
+        ));
+
         JLabel lblTitulo = new JLabel("Pedir Cita", JLabel.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
-        lblTitulo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 2, 0, Color.GRAY),
-            BorderFactory.createEmptyBorder(20, 20, 15, 20)
-        ));
-        add(lblTitulo, BorderLayout.NORTH);
+        lblTitulo.setForeground(Color.WHITE);
+        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
+        add(panelTitulo, BorderLayout.NORTH);
 
         // ===== FORMULARIO CENTRAL =====
         JPanel panelFormulario = new JPanel(new GridBagLayout());
-        panelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        panelFormulario.setOpaque(true);
+        panelFormulario.setBackground(Color.decode("#F5F5F5"));
+        panelFormulario.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2),
+            BorderFactory.createEmptyBorder(20, 40, 20, 40)
+        ));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -100,21 +120,18 @@ public class VentanaPedirCita extends JPanel {
         gbc.weighty = 1.0;
         panelFormulario.add(scrollDescripcion, gbc);
 
-        add(panelFormulario, BorderLayout.CENTER);
+        JPanel wrapperFormulario = new JPanel(new GridBagLayout());
+        wrapperFormulario.setOpaque(false);
+        wrapperFormulario.add(panelFormulario);
+        add(wrapperFormulario, BorderLayout.CENTER);
 
         // ===== BOTONES INFERIORES =====
         JPanel panelBotones = new JPanel();
+        panelBotones.setOpaque(false);
         panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 40, 20, 40));
 
-        JButton btnGuardar = new JButton("Confirmar Cita");
-        btnGuardar.setFont(new Font("Arial", Font.BOLD, 14));
-        btnGuardar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnGuardar.setFocusPainted(false);
-
-        JButton btnVolver = new JButton("Volver");
-        btnVolver.setFont(new Font("Arial", Font.PLAIN, 14));
-        btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnVolver.setFocusPainted(false);
+        JButton btnGuardar = createRoundedButton("Confirmar Cita", Color.decode("#FF6B00"), Color.WHITE);
+        JButton btnVolver = createRoundedButton("Volver", Color.decode("#2C2C2C"), Color.WHITE);
 
         panelBotones.add(btnGuardar);
         panelBotones.add(btnVolver);
@@ -205,5 +222,48 @@ public class VentanaPedirCita extends JPanel {
             frame.revalidate();
             frame.repaint();
         }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        int w = getWidth();
+        int h = getHeight();
+        Color color1 = Color.decode("#F5F5F5");
+        Color color2 = Color.decode("#D3DEED");
+        GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+        g2.setPaint(gp);
+        g2.fillRect(0, 0, w, h);
+    }
+
+    private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
+        JButton btn = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isPressed()) {
+                    g2.setColor(bgColor.darker());
+                } else if (getModel().isRollover()) {
+                    g2.setColor(bgColor.brighter());
+                } else {
+                    g2.setColor(bgColor);
+                }
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                super.paintComponent(g2);
+                g2.dispose();
+            }
+        };
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setBackground(bgColor);
+        btn.setForeground(fgColor);
+        btn.setFont(new Font("Arial", Font.BOLD, 14));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(150, 40));
+        return btn;
     }
 }
