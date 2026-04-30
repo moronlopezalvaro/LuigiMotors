@@ -154,4 +154,27 @@ public class ConexionBBDD {
         }
     }
 
+    public boolean registrarUsuario(String correo, String contrasena) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "INSERT INTO usuarios (correo_electronico, contrasenya_usuario) VALUES (?, ?)";
+                java.sql.PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, correo);
+                pstmt.setString(2, contrasena);
+                
+                int filasAfectadas = pstmt.executeUpdate();
+                pstmt.close();
+                
+                return filasAfectadas > 0;
+            } catch (SQLException e) {
+                System.out.println("Error al registrar usuario");
+                e.printStackTrace();
+                return false;
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
 }

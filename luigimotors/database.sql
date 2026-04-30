@@ -23,6 +23,12 @@ CREATE TABLE reparacion (
     FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente) ON DELETE CASCADE
 );
 
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    correo_electronico VARCHAR(100) NOT NULL UNIQUE,
+    contrasenya_usuario VARCHAR(255) NOT NULL
+);
+
 -- insertar datos en las tablas
 INSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES 
 ('12345678A', 'Admin Mecánico', '600111222', 'admin123', 'Administrador'),
