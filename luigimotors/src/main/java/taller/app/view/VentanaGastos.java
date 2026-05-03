@@ -106,10 +106,56 @@ public class VentanaGastos extends JPanel {
         String[] datosPresupuesto = bd.obtenerPresupuesto(cita.getIdCita());
 
         if (datosPresupuesto == null) {
-            // Generar presupuesto simulado (Opción A)
-            String desglose = generarDesgloseSimulado(cita.getDescripcion());
-            double manoObra = 40.0 + new Random().nextInt(60);
-            double total = calcularTotalSimulado(desglose, manoObra);
+            // Generar presupuesto usando el catálogo real
+            List<String[]> matches = bd.obtenerPreciosCatalogo(cita.getDescripcion());
+            
+            String desglose;
+            double manoObra;
+            double total;
+
+            if (!matches.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                double subtotalProductos = 0;
+                double maxManoObra = 0;
+
+                // Intentar extraer cantidad de la descripción (ej: "4 neumáticos")
+                int cantidad = 1;
+                java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\b([1-9])\\b");
+                java.util.regex.Matcher m = p.matcher(cita.getDescripcion());
+                if (m.find()) {
+                    cantidad = Integer.parseInt(m.group(1));
+                }
+
+                for (String[] match : matches) {
+                    double pTotal = Double.parseDouble(match[1]);
+                    double mObraBase = Double.parseDouble(match[2]);
+                    double precioProductoUnitario = pTotal - mObraBase;
+
+                    // Si la descripción menciona una cantidad, multiplicamos
+                    double precioProductoTotal = precioProductoUnitario * cantidad;
+                    double manoObraTotal = mObraBase * cantidad;
+
+                    String nombreConcepto = match[0];
+                    if (cantidad > 1) {
+                        nombreConcepto += " (x" + cantidad + ")";
+                    }
+
+                    sb.append(nombreConcepto).append(": ").append(String.format("%.2f", precioProductoTotal)).append("€\n");
+                    subtotalProductos += precioProductoTotal;
+                    
+                    // Sumamos la mano de obra proporcional a la cantidad
+                    maxManoObra += manoObraTotal;
+                }
+                
+                desglose = sb.toString();
+                manoObra = maxManoObra;
+                total = subtotalProductos + manoObra;
+            } else {
+                // Fallback si no hay coincidencias exactas
+                desglose = "Revisión y diagnóstico general: 40.00€\n";
+                manoObra = 40.0;
+                total = 80.0;
+            }
             
             bd.guardarPresupuesto(cita.getIdCita(), desglose, manoObra, total);
             datosPresupuesto = new String[]{desglose, String.valueOf(manoObra), String.valueOf(total)};
@@ -120,39 +166,7 @@ public class VentanaGastos extends JPanel {
         ticket.setVisible(true);
     }
 
-    private String generarDesgloseSimulado(String descripcion) {
-        StringBuilder sb = new StringBuilder();
-        Random rnd = new Random();
-        
-        // Simular productos basados en palabras de la descripción o genéricos
-        String[] palabras = descripcion.split(" ");
-        if (palabras.length > 0 && descripcion.length() > 5) {
-            for (int i = 0; i < Math.min(palabras.length, 3); i++) {
-                if (palabras[i].length() > 3) {
-                    sb.append("Repuesto ").append(palabras[i]).append(": ").append(10 + rnd.nextInt(90)).append(".00€\n");
-                }
-            }
-        }
-        
-        if (sb.length() == 0) {
-            sb.append("Kit de revisión básica: 45.00€\n");
-            sb.append("Líquidos y filtros: 30.00€\n");
-        }
-        
-        return sb.toString();
-    }
 
-    private double calcularTotalSimulado(String desglose, double manoObra) {
-        double total = manoObra;
-        String[] lineas = desglose.split("\n");
-        for (String linea : lineas) {
-            try {
-                String precioStr = linea.substring(linea.lastIndexOf(": ") + 2, linea.lastIndexOf("€")).trim();
-                total += Double.parseDouble(precioStr);
-            } catch (Exception ignored) {}
-        }
-        return total;
-    }
 
     private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
         JButton btn = new JButton(text) {

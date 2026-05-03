@@ -93,28 +93,18 @@ public class VentanaInicial extends JPanel {
                 java.util.List<taller.app.model.Cita> citas = bd.obtenerCitasCliente(nombreCliente);
 
                 if (citas.isEmpty()) {
-                    System.out.println("DEBUG: No se encontraron citas para " + nombreCliente);
                     // Si no tiene citas, mostramos el mensaje original "próximamente" o similar
                     javax.swing.JOptionPane.showMessageDialog(VentanaInicial.this,
                             "Actualmente no tienes citas registradas.\nFuncionalidad próximamente para nuevas reparaciones.", 
                             "Calcular gastos",
                             javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    System.out.println("DEBUG: Se encontraron " + citas.size() + " citas. Cambiando pantalla...");
                     // Si tiene citas, abrimos la pantalla de gastos
                     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(VentanaInicial.this);
                     if (frame != null) {
-                        try {
-                            frame.setContentPane(new VentanaGastos(nombreCliente));
-                            frame.revalidate();
-                            frame.repaint();
-                            System.out.println("DEBUG: Pantalla cambiada con éxito.");
-                        } catch (Exception ex) {
-                            System.out.println("DEBUG: Error al crear VentanaGastos: " + ex.getMessage());
-                            ex.printStackTrace();
-                        }
-                    } else {
-                        System.out.println("DEBUG: No se pudo obtener el JFrame ancestro.");
+                        frame.setContentPane(new VentanaGastos(nombreCliente));
+                        frame.revalidate();
+                        frame.repaint();
                     }
                 }
             }

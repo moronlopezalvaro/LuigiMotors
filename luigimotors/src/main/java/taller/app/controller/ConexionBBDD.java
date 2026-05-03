@@ -456,6 +456,68 @@ public class ConexionBBDD {
         return false;
     }
 
+    // Busca en el catálogo de reparaciones si alguna coincide con la descripción
+    public java.util.List<String[]> obtenerPreciosCatalogo(String descripcion) {
+        java.util.List<String[]> resultados = new java.util.ArrayList<>();
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT nombre, precio_total, mano_obra FROM catalogo_reparaciones";
+                Statement stmt = conexion.createStatement();
+                ResultSet rs = stmt.executeQuery(consulta);
+
+                String descLower = descripcion.toLowerCase();
+                // Limpiamos la descripción de caracteres extraños por si acaso
+                descLower = descLower.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n");
+
+                while (rs.next()) {
+                    String nombre = rs.getString("nombre");
+                    String nombreLower = nombre.toLowerCase().replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n");
+
+                    // Dividimos en palabras clave para buscar coincidencias
+                    String[] palabrasNombre = nombreLower.split("[\\s+()]");
+                    int palabrasEncontradas = 0;
+                    
+                    for (String palabra : palabrasNombre) {
+                        // Ignoramos palabras genéricas y muy cortas
+                        if (palabra.length() > 3 
+                            && !palabra.equals("cambio") 
+                            && !palabra.equals("reparacion") 
+                            && !palabra.equals("sustitucion")
+                            && !palabra.equals("limpieza")) {
+                            
+                            if (descLower.contains(palabra)) {
+                                palabrasEncontradas++;
+                            }
+                        }
+                    }
+
+                    // Si hemos encontrado palabras clave específicas (ej: "turbo", "aceite")
+                    // O si el nombre coincide exactamente
+                    if (palabrasEncontradas > 0 || descLower.equals(nombreLower)) {
+                        String[] datos = new String[3];
+                        datos[0] = nombre;
+                        datos[1] = String.valueOf(rs.getDouble("precio_total"));
+                        datos[2] = String.valueOf(rs.getDouble("mano_obra"));
+                        resultados.add(datos);
+                        
+                        // Si encontramos una coincidencia fuerte, podemos parar de buscar otras
+                        // para evitar que salgan demasiadas cosas en el ticket
+                        if (descLower.contains(nombreLower)) break; 
+                    }
+                }
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al consultar el catálogo");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return resultados;
+    }
+
     // =====================================================================
     // MÉTODOS PARA EL PANEL DE ADMINISTRACIÓN
     // =====================================================================
