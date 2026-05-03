@@ -536,6 +536,104 @@ public class ConexionBBDD {
         return sb.toString();
     }
 
+    // Devuelve una lista con todas las reparaciones de la BD
+    public java.util.List<Reparacion> obtenerTodasLasReparaciones() {
+        Connection conexion = conectar();
+        java.util.List<Reparacion> lista = new java.util.ArrayList<>();
+
+        if (conexion != null) {
+            try {
+                // SELECT de todas las reparaciones ordenadas por ID
+                String consulta = "SELECT id_reparacion, matricula, descripcion, coste, fecha_ingreso, estado, id_cliente FROM reparacion ORDER BY id_reparacion";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    // Crear un objeto Reparacion por cada fila y añadirlo a la lista
+                    Reparacion r = new Reparacion(
+                            rs.getInt("id_reparacion"),
+                            rs.getString("matricula"),
+                            rs.getString("descripcion"),
+                            rs.getDouble("coste"),
+                            rs.getString("fecha_ingreso"),
+                            rs.getString("estado"),
+                            rs.getInt("id_cliente"));
+                    lista.add(r);
+                }
+
+                rs.close();
+                pstmt.close();
+
+            } catch (SQLException e) {
+                System.out.println("Error al obtener todas las reparaciones");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+
+        return lista; // Devuelve la lista (puede estar vacía si no hay reparaciones)
+    }
+
+    // Actualiza el estado de una reparación según su ID (Pendiente <-> Terminado)
+    public boolean actualizarEstadoReparacion(int idReparacion, String nuevoEstado) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                // UPDATE solo el campo estado de la reparación indicada
+                String consulta = "UPDATE reparacion SET estado = ? WHERE id_reparacion = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, nuevoEstado);
+                pstmt.setInt(2, idReparacion);
+
+                int filas = pstmt.executeUpdate();
+                pstmt.close();
+
+                if (filas > 0) {
+                    // Si se actualizó en MySQL, también lo guardamos en el archivo .sql
+                    guardarActualizacionEstadoEnSQL(idReparacion, nuevoEstado);
+                    return true;
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al actualizar estado de reparación");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
+
+    // Guarda el UPDATE del estado en el archivo database.sql para tener persistencia total
+    private void guardarActualizacionEstadoEnSQL(int idReparacion, String nuevoEstado) {
+        // Intentar encontrar el archivo database.sql en varias rutas posibles
+        String baseDir = System.getProperty("user.dir");
+        File archivoSQL = new File(baseDir, "database.sql");
+        if (!archivoSQL.exists()) {
+            archivoSQL = new File(baseDir, "luigimotors/database.sql");
+        }
+        if (!archivoSQL.exists()) {
+            // Ruta absoluta como último recurso
+            archivoSQL = new File(
+                    "c:/Users/iLERNA/OneDrive - Ilerna/Programación/Trimestre 3/Actividad 8/LuigiMotors/luigimotors/database.sql");
+        }
+
+        // Abrir el archivo en modo append (true = añadir al final, no sobreescribir)
+        try (FileWriter fw = new FileWriter(archivoSQL, true);
+                BufferedWriter bw = new BufferedWriter(fw)) {
+
+            // Formatear la sentencia UPDATE con el nuevo estado y el ID de la reparación
+            String update = String.format(
+                    "\nUPDATE reparacion SET estado = '%s' WHERE id_reparacion = %d;",
+                    nuevoEstado, idReparacion);
+            bw.write(update);
+            System.out.println("Actualización de estado guardada en database.sql correctamente.");
+        } catch (IOException e) {
+            System.out.println("No se pudo escribir la actualización en el archivo database.sql");
+            e.printStackTrace();
+        }
+    }
+
     // Suma el coste de todas las reparaciones y devuelve el total de ingresos
     public double calcularIngresosTotales() {
         Connection conexion = conectar();

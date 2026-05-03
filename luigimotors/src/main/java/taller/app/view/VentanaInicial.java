@@ -1,23 +1,8 @@
 package taller.app.view;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 // Pantalla principal que ve el cliente después de iniciar sesión
 public class VentanaInicial extends JPanel {
@@ -34,11 +19,11 @@ public class VentanaInicial extends JPanel {
         panelTitulo.setOpaque(true);
         panelTitulo.setBackground(Color.decode("#1E3A5F")); // Azul oscuro corporativo
         panelTitulo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(15, 20, 10, 20),   // margen exterior
-                BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2) // borde gris oscuro
-            ),
-            BorderFactory.createEmptyBorder(15, 20, 15, 20)        // padding interior
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createEmptyBorder(15, 20, 10, 20), // margen exterior
+                        BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2) // borde gris oscuro
+                ),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20) // padding interior
         ));
 
         // Título de la aplicación
@@ -63,7 +48,7 @@ public class VentanaInicial extends JPanel {
         panelBotones.setOpaque(false); // Transparente para ver el fondo degradado
 
         // Colores de la paleta del proyecto
-        Color colorNaranja    = Color.decode("#FF6B00"); // Naranja: acción principal
+        Color colorNaranja = Color.decode("#FF6B00"); // Naranja: acción principal
         Color colorAzulOscuro = Color.decode("#1E3A5F"); // Azul: secundario
         Color colorGrisOscuro = Color.decode("#2C2C2C"); // Gris: salir
 
@@ -103,8 +88,8 @@ public class VentanaInicial extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // Por ahora solo mostramos un mensaje informativo
                 javax.swing.JOptionPane.showMessageDialog(VentanaInicial.this,
-                    "Funcionalidad próximamente.", "Calcular gastos",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        "Funcionalidad próximamente.", "Calcular gastos",
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -137,7 +122,8 @@ public class VentanaInicial extends JPanel {
         g2.fillRect(0, 0, w, h);
     }
 
-    // Crea un botón con esquinas redondeadas y efecto hover (cambia de color al pasar el ratón)
+    // Crea un botón con esquinas redondeadas y efecto hover (cambia de color al
+    // pasar el ratón)
     private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
         JButton btn = new JButton(text) {
             @Override
@@ -158,8 +144,8 @@ public class VentanaInicial extends JPanel {
             }
         };
         btn.setContentAreaFilled(false); // Desactivar el fondo por defecto de Swing
-        btn.setFocusPainted(false);      // Sin borde de foco al usar el teclado
-        btn.setBorderPainted(false);     // Sin borde estándar
+        btn.setFocusPainted(false); // Sin borde de foco al usar el teclado
+        btn.setBorderPainted(false); // Sin borde estándar
         btn.setBackground(bgColor);
         btn.setForeground(fgColor);
         btn.setFont(new Font("Arial", Font.BOLD, 16));
