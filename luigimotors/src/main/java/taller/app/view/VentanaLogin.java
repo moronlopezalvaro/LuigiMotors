@@ -18,34 +18,37 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 
+// Pantalla de inicio de sesión y registro del usuario
 public class VentanaLogin extends JPanel {
-    // Constructor
+
+    // Constructor: monta las dos pestañas (login y registro)
     public VentanaLogin() {
-        // Layout principal
+        // Layout principal para que el JTabbedPane ocupe toda la ventana
         setLayout(new BorderLayout());
 
-        // Pestañas
+        // Crear el panel de pestañas
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Pestaña Iniciar Sesión
+        // Pestaña 1: iniciar sesión
         JPanel panelLogin = crearPanelLogin();
         tabbedPane.addTab("Iniciar Sesión", panelLogin);
 
-        // Pestaña Registrarse
+        // Pestaña 2: registrarse como nuevo usuario
         JPanel panelRegistro = crearPanelRegistro();
         tabbedPane.addTab("Registrarse", panelRegistro);
 
-        // Añadir pestañas
+        // Añadir las pestañas al centro del layout
         add(tabbedPane, BorderLayout.CENTER);
     }
 
-    // Panel iniciar sesión
+    // Crea el panel de la pestaña "Iniciar Sesión" con fondo de imagen
     private JPanel crearPanelLogin() {
-        // Contenedor principal con imagen de fondo
+        // Contenedor con imagen de fondo personalizada usando paintComponent
         JPanel contenedor = new JPanel(new GridBagLayout()) {
             private java.awt.Image bgImage;
             {
                 try {
+                    // Cargar la imagen desde la carpeta de recursos del proyecto
                     java.net.URL imgUrl = getClass().getResource("/taller/app/resources/FotoLogIn.jpg");
                     if (imgUrl != null) {
                         bgImage = new javax.swing.ImageIcon(imgUrl).getImage();
@@ -58,24 +61,26 @@ public class VentanaLogin extends JPanel {
             @Override
             protected void paintComponent(java.awt.Graphics g) {
                 super.paintComponent(g);
+                // Dibujar la imagen escalada al tamaño del panel
                 if (bgImage != null) {
                     g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
                 }
             }
         };
 
-        // Layout en cuadrícula para el formulario (fondo transparente)
+        // Panel del formulario sin fondo (transparente para ver la imagen)
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(150, 20, 20, 20));
 
+        // Configuración del GridBagLayout para colocar los componentes
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Nombre
+        // Campo Nombre
         JLabel lblNombre = new JLabel("Nombre:");
-        lblNombre.setForeground(java.awt.Color.WHITE);
+        lblNombre.setForeground(java.awt.Color.WHITE); // Blanco para que se vea sobre la imagen
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(lblNombre, gbc);
@@ -85,7 +90,7 @@ public class VentanaLogin extends JPanel {
         gbc.gridy = 0;
         panel.add(txtNombre, gbc);
 
-        // Contraseña
+        // Campo Contraseña
         JLabel lblContrasena = new JLabel("Contraseña:");
         lblContrasena.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
@@ -97,35 +102,43 @@ public class VentanaLogin extends JPanel {
         gbc.gridy = 1;
         panel.add(txtContrasena, gbc);
 
-        // Botón
+        // Botón para entrar
         JButton btnEntrar = new JButton("Entrar");
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 2; // El botón ocupa las dos columnas
         panel.add(btnEntrar, gbc);
 
-        // Acción del botón
+        // Acción al hacer clic en "Entrar"
         btnEntrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Leer campos
+                // Leer lo que el usuario ha escrito
                 String nombre = txtNombre.getText().trim();
                 String contrasena = new String(txtContrasena.getPassword());
 
-                // Comprobar vacíos
+                // Validar que ningún campo esté vacío
                 if (nombre.isEmpty() || contrasena.isEmpty()) {
                     JOptionPane.showMessageDialog(contenedor, "Por favor, rellene todos los campos.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Conectar a BD
+                // Consultar la BD y obtener el rol del usuario
                 ConexionBBDD bd = new ConexionBBDD();
-                boolean exito = bd.validarLoginCliente(nombre, contrasena);
+                String rol = bd.validarLoginCliente(nombre, contrasena);
 
-                if (exito) {
-                    avanzarPantallaBienvenida(nombre);
+                if (rol != null) {
+                    // Si el login fue correcto, redirigir según el rol
+                    if ("Administrador".equals(rol)) {
+                        // Rol administrador: abrir el panel de administración
+                        avanzarPantallaAdmin(nombre);
+                    } else {
+                        // Rol cliente (u otro): abrir la pantalla normal del cliente
+                        avanzarPantallaBienvenida(nombre);
+                    }
                 } else {
+                    // Si el rol es null, las credenciales son incorrectas
                     JOptionPane.showMessageDialog(contenedor, "Nombre o contraseña incorrectos.",
                             "Error de Inicio de Sesión", JOptionPane.ERROR_MESSAGE);
                 }
@@ -136,9 +149,9 @@ public class VentanaLogin extends JPanel {
         return contenedor;
     }
 
-    // Panel registro
+    // Crea el panel de la pestaña "Registrarse" con fondo de imagen
     private JPanel crearPanelRegistro() {
-        // Contenedor principal con imagen de fondo
+        // Contenedor con imagen de fondo igual que el de login
         JPanel contenedor = new JPanel(new GridBagLayout()) {
             private java.awt.Image bgImage;
             {
@@ -161,7 +174,7 @@ public class VentanaLogin extends JPanel {
             }
         };
 
-        // Layout en cuadrícula para el formulario (fondo transparente)
+        // Panel del formulario transparente
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setOpaque(false);
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(150, 20, 20, 20));
@@ -170,7 +183,7 @@ public class VentanaLogin extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // DNI
+        // Campo DNI
         JLabel lblDni = new JLabel("DNI:");
         lblDni.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
@@ -182,7 +195,7 @@ public class VentanaLogin extends JPanel {
         gbc.gridy = 0;
         panel.add(txtDni, gbc);
 
-        // Nombre
+        // Campo Nombre
         JLabel lblNombre = new JLabel("Nombre:");
         lblNombre.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
@@ -194,7 +207,7 @@ public class VentanaLogin extends JPanel {
         gbc.gridy = 1;
         panel.add(txtNombre, gbc);
 
-        // Teléfono
+        // Campo Teléfono
         JLabel lblTelefono = new JLabel("Teléfono:");
         lblTelefono.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
@@ -206,7 +219,7 @@ public class VentanaLogin extends JPanel {
         gbc.gridy = 2;
         panel.add(txtTelefono, gbc);
 
-        // Contraseña
+        // Campo Contraseña
         JLabel lblContrasena = new JLabel("Contraseña:");
         lblContrasena.setForeground(java.awt.Color.WHITE);
         gbc.gridx = 0;
@@ -218,37 +231,38 @@ public class VentanaLogin extends JPanel {
         gbc.gridy = 3;
         panel.add(txtContrasena, gbc);
 
-        // Botón
+        // Botón para registrar
         JButton btnRegistrar = new JButton("Registrar");
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 2; // Ocupa las dos columnas
         panel.add(btnRegistrar, gbc);
 
-        // Acción del botón
+        // Acción al hacer clic en "Registrar"
         btnRegistrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Leer datos
+                // Leer todos los campos del formulario
                 String dni = txtDni.getText().trim();
                 String nombre = txtNombre.getText().trim();
                 String telefono = txtTelefono.getText().trim();
                 String contrasena = new String(txtContrasena.getPassword());
 
-                // Comprobar vacíos
+                // Comprobar que ningún campo esté vacío
                 if (dni.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || contrasena.isEmpty()) {
                     JOptionPane.showMessageDialog(contenedor, "Por favor, rellene todos los campos.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Guardar en BD
+                // Guardar el nuevo cliente en la BD (siempre con rol "Cliente")
                 ConexionBBDD bd = new ConexionBBDD();
                 boolean exito = bd.registrarNuevoCliente(dni, nombre, telefono, contrasena);
 
                 if (exito) {
                     JOptionPane.showMessageDialog(contenedor, "Usuario registrado correctamente.", "Éxito",
                             JOptionPane.INFORMATION_MESSAGE);
+                    // Ir directamente a la pantalla de cliente
                     avanzarPantallaBienvenida(nombre);
                 } else {
                     JOptionPane.showMessageDialog(contenedor,
@@ -262,7 +276,17 @@ public class VentanaLogin extends JPanel {
         return contenedor;
     }
 
-    // Cambiar a pantalla principal (VentanaInicial)
+    // Cambia el contenido del JFrame para mostrar el panel de administración
+    private void avanzarPantallaAdmin(String nombreAdmin) {
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        if (frame != null) {
+            frame.setContentPane(new VentanaAdministrador(nombreAdmin));
+            frame.revalidate();
+            frame.repaint();
+        }
+    }
+
+    // Cambia el contenido del JFrame para mostrar la pantalla principal del cliente
     private void avanzarPantallaBienvenida(String nombreCliente) {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {
