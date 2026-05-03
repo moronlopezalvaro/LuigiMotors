@@ -3,6 +3,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+// Esta es una clase de prueba (script suelto) para verificar si podemos 
+// leer correctamente los datos de nuestro catálogo de la base de datos.
 public class VerifyCatalogo {
     public static void main(String[] args) {
         try {

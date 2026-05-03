@@ -5,33 +5,32 @@ import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
 
-// Ventana del panel de administración con todas las opciones de gestión del taller
 public class VentanaAdministrador extends JPanel {
 
-    private String nombreAdmin; // Nombre del administrador que ha iniciado sesión
+    private String nombreAdmin;
 
     public VentanaAdministrador(String nombreAdmin) {
         this.nombreAdmin = nombreAdmin;
         setLayout(new BorderLayout());
-        setOpaque(false); // Para que el fondo degradado se dibuje correctamente
+        setOpaque(false);
 
-        // ===== ENCABEZADO SUPERIOR =====
+        // encabezado
         JPanel panelTitulo = new JPanel(new BorderLayout());
         panelTitulo.setOpaque(true);
-        panelTitulo.setBackground(Color.decode("#1E3A5F")); // Color azul oscuro corporativo
+        panelTitulo.setBackground(Color.decode("#1E3A5F"));
         panelTitulo.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createEmptyBorder(15, 20, 10, 20),
                         BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)),
                 BorderFactory.createEmptyBorder(15, 20, 15, 20)));
 
-        // Título principal centrado
+        // título
         JLabel lblTitulo = new JLabel("Luigi Motors · Panel de Administración", JLabel.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
         lblTitulo.setForeground(Color.WHITE);
         panelTitulo.add(lblTitulo, BorderLayout.CENTER);
 
-        // Texto con el nombre del administrador debajo del título
+        // texto
         JLabel lblBienvenido = new JLabel("Administrador: " + nombreAdmin);
         lblBienvenido.setFont(new Font("Arial", Font.ITALIC, 13));
         lblBienvenido.setForeground(Color.decode("#F5F5F5"));
@@ -40,22 +39,21 @@ public class VentanaAdministrador extends JPanel {
 
         add(panelTitulo, BorderLayout.NORTH);
 
-        // ===== PANEL DE BOTONES DEL MENÚ =====
-        // GridLayout de 8 filas, 1 columna, con 15px de separación entre filas
+        // panel botones
         JPanel panelBotones = new JPanel(new GridLayout(8, 1, 0, 15));
         panelBotones.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
-        panelBotones.setOpaque(false); // Transparente para ver el fondo degradado
+        panelBotones.setOpaque(false);
 
-        // Colores de la paleta del proyecto
-        Color colorNaranja = Color.decode("#FF6B00"); // Naranja: acento principal
-        Color colorAzul = Color.decode("#1E3A5F"); // Azul: corporativo
-        Color colorVerde = Color.decode("#2E7D32"); // Verde: para añadir
-        Color colorRojo = Color.decode("#B71C1C"); // Rojo: para borrar
-        Color colorMorado = Color.decode("#4A148C"); // Morado: para búsqueda
-        Color colorCian = Color.decode("#00695C"); // Verde azulado: para editar reparación
-        Color colorGrisOscuro = Color.decode("#2C2C2C"); // Gris: para salir
+        // colores
+        Color colorNaranja = Color.decode("#FF6B00");
+        Color colorAzul = Color.decode("#1E3A5F");
+        Color colorVerde = Color.decode("#2E7D32");
+        Color colorRojo = Color.decode("#B71C1C");
+        Color colorMorado = Color.decode("#4A148C");
+        Color colorCian = Color.decode("#00695C");
+        Color colorGrisOscuro = Color.decode("#2C2C2C");
 
-        // Crear los 8 botones del menú con sus colores
+        // botones
         JButton btnAnadirCliente = createRoundedButton("Añadir cliente", colorVerde, Color.WHITE);
         JButton btnAnadirReparacion = createRoundedButton("Añadir reparación", colorNaranja, Color.WHITE);
         JButton btnEditarReparacion = createRoundedButton("Editar reparación", colorCian, Color.WHITE);
@@ -65,7 +63,7 @@ public class VentanaAdministrador extends JPanel {
         JButton btnCalcularIngresos = createRoundedButton("Calcular ingresos", colorAzul, Color.WHITE);
         JButton btnSalir = createRoundedButton("Salir / Cerrar Sesión", colorGrisOscuro, Color.WHITE);
 
-        // Añadir los botones al panel en orden
+        // añadir los botones al panel
         panelBotones.add(btnAnadirCliente);
         panelBotones.add(btnAnadirReparacion);
         panelBotones.add(btnEditarReparacion);
@@ -77,19 +75,17 @@ public class VentanaAdministrador extends JPanel {
 
         add(panelBotones, BorderLayout.CENTER);
 
-        // ===== ACCIONES DE CADA BOTÓN =====
-
-        // --- Botón 1: Añadir cliente ---
+        // acciones
         btnAnadirCliente.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Campos del formulario para el nuevo cliente
+                // campos
                 JTextField txtDni = new JTextField();
                 JTextField txtNombre = new JTextField();
                 JTextField txtTelefono = new JTextField();
                 JPasswordField txtClave = new JPasswordField();
 
-                // Array con etiquetas y campos que mostrará el JOptionPane
+                // Array con etiquetas y campos
                 Object[] campos = {
                         "DNI:", txtDni,
                         "Nombre:", txtNombre,
@@ -97,26 +93,26 @@ public class VentanaAdministrador extends JPanel {
                         "Contraseña:", txtClave
                 };
 
-                // Mostrar el diálogo con el formulario
+                // mostrar el diálogo
                 int opcion = JOptionPane.showConfirmDialog(
                         VentanaAdministrador.this, campos,
                         "Añadir nuevo cliente", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
                 if (opcion == JOptionPane.OK_OPTION) {
-                    // Leer lo que el admin ha escrito en cada campo
+                    // leer campos
                     String dni = txtDni.getText().trim();
                     String nombre = txtNombre.getText().trim();
                     String telefono = txtTelefono.getText().trim();
                     String contrasena = new String(txtClave.getPassword());
 
-                    // Comprobar que no haya ningún campo vacío
+                    // comprobar que no haya campos vacíos
                     if (dni.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || contrasena.isEmpty()) {
                         JOptionPane.showMessageDialog(VentanaAdministrador.this,
                                 "Por favor, rellena todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
-                    // Guardar el cliente en la BD usando el método de ConexionBBDD
+                    // guardar cliente
                     ConexionBBDD bd = new ConexionBBDD();
                     boolean exito = bd.registrarNuevoCliente(dni, nombre, telefono, contrasena);
 
@@ -133,16 +129,16 @@ public class VentanaAdministrador extends JPanel {
             }
         });
 
-        // --- Botón 2: Añadir reparación ---
+        // botón reparación
         btnAnadirReparacion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Campos del formulario para la nueva reparación
+                // campos
                 JTextField txtMatricula = new JTextField();
                 JTextField txtDescripcion = new JTextField();
                 JTextField txtCoste = new JTextField();
                 JTextField txtFecha = new JTextField();
-                JTextField txtEstado = new JTextField("Pendiente"); // Valor por defecto
+                JTextField txtEstado = new JTextField("Pendiente");
                 JTextField txtIdCliente = new JTextField();
 
                 Object[] campos = {
@@ -159,7 +155,7 @@ public class VentanaAdministrador extends JPanel {
                         "Añadir reparación", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
                 if (opcion == JOptionPane.OK_OPTION) {
-                    // Leer los datos del formulario
+                    // leer datos
                     String matricula = txtMatricula.getText().trim();
                     String descripcion = txtDescripcion.getText().trim();
                     String costeStr = txtCoste.getText().trim();
@@ -167,7 +163,7 @@ public class VentanaAdministrador extends JPanel {
                     String estado = txtEstado.getText().trim();
                     String idClienteStr = txtIdCliente.getText().trim();
 
-                    // Validar que no haya campos vacíos
+                    // validar campos
                     if (matricula.isEmpty() || descripcion.isEmpty() || costeStr.isEmpty()
                             || fecha.isEmpty() || idClienteStr.isEmpty()) {
                         JOptionPane.showMessageDialog(VentanaAdministrador.this,
@@ -176,11 +172,11 @@ public class VentanaAdministrador extends JPanel {
                     }
 
                     try {
-                        // Convertir el coste y el ID de String a número
+                        // convertir coste e ID a número
                         double coste = Double.parseDouble(costeStr);
                         int idCliente = Integer.parseInt(idClienteStr);
 
-                        // Guardar la reparación en la BD
+                        // guardar reparación en la BD
                         ConexionBBDD bd = new ConexionBBDD();
                         boolean exito = bd.insertarReparacion(matricula, descripcion, coste, fecha, estado, idCliente);
 
@@ -193,7 +189,7 @@ public class VentanaAdministrador extends JPanel {
                                     "Error al añadir la reparación.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (NumberFormatException ex) {
-                        // Si el coste o el ID no son números, mostramos error de formato
+                        // si el coste o el ID no son números mostramos error
                         JOptionPane.showMessageDialog(VentanaAdministrador.this,
                                 "El coste debe ser un número válido (ej: 45.50) y el ID cliente un número entero.",
                                 "Formato incorrecto", JOptionPane.ERROR_MESSAGE);
@@ -202,11 +198,11 @@ public class VentanaAdministrador extends JPanel {
             }
         });
 
-        // --- Botón 3: Editar reparación ---
+        // botón editar reparación
         btnEditarReparacion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Obtener todas las reparaciones de la BD
+                // obtener reparaciones
                 ConexionBBDD bd = new ConexionBBDD();
                 java.util.List<taller.app.model.Reparacion> reparaciones = bd.obtenerTodasLasReparaciones();
 
@@ -217,10 +213,10 @@ public class VentanaAdministrador extends JPanel {
                     return;
                 }
 
-                // Columnas de la tabla
-                String[] columnas = {"ID", "Matrícula", "Descripción", "Coste (€)", "Fecha", "Estado", "ID Cliente"};
+                // columnas de la tabla
+                String[] columnas = { "ID", "Matrícula", "Descripción", "Coste (€)", "Fecha", "Estado", "ID Cliente" };
 
-                // Rellenar los datos de la tabla con cada reparación
+                // rellenar datos de la tabla
                 Object[][] datos = new Object[reparaciones.size()][7];
                 for (int i = 0; i < reparaciones.size(); i++) {
                     taller.app.model.Reparacion r = reparaciones.get(i);
@@ -233,11 +229,11 @@ public class VentanaAdministrador extends JPanel {
                     datos[i][6] = r.getId_cliente();
                 }
 
-                // Crear la tabla con los datos (no editable directamente)
+                // crear tabla no editable
                 javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(datos, columnas) {
                     @Override
                     public boolean isCellEditable(int row, int col) {
-                        return false; // Las celdas no se editan a mano
+                        return false; // celdas no editables
                     }
                 };
                 JTable tabla = new JTable(modelo);
@@ -247,7 +243,7 @@ public class VentanaAdministrador extends JPanel {
                 tabla.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
                 tabla.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-                // Colorear las filas según el estado
+                // colorear filas según estado
                 tabla.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
                     @Override
                     public java.awt.Component getTableCellRendererComponent(
@@ -256,15 +252,16 @@ public class VentanaAdministrador extends JPanel {
                         String estado = (String) t.getValueAt(row, 5);
                         if (!isSelected) {
                             if ("Terminado".equalsIgnoreCase(estado)) {
-                                setBackground(new Color(200, 240, 200)); // Verde claro = terminado
+                                setBackground(new Color(200, 240, 200)); // verde = terminado
                             } else {
-                                setBackground(new Color(255, 235, 200)); // Naranja claro = pendiente
+                                setBackground(new Color(255, 235, 200)); // naranja = pendiente
                             }
                         } else {
-                            setBackground(new Color(100, 149, 237)); // Azul al seleccionar
+                            setBackground(new Color(100, 149, 237)); // azul al seleccionar
                             setForeground(Color.WHITE);
                         }
-                        if (!isSelected) setForeground(Color.BLACK);
+                        if (!isSelected)
+                            setForeground(Color.BLACK);
                         return this;
                     }
                 });
@@ -272,7 +269,7 @@ public class VentanaAdministrador extends JPanel {
                 JScrollPane scroll = new JScrollPane(tabla);
                 scroll.setPreferredSize(new Dimension(750, 300));
 
-                // Botón para cambiar el estado de la reparación seleccionada
+                // botón para cambiar el estado de la reparación seleccionada
                 JButton btnCambiarEstado = new JButton("🔄  Cambiar estado (Pendiente ↔ Terminado)");
                 btnCambiarEstado.setFont(new Font("Arial", Font.BOLD, 13));
                 btnCambiarEstado.setBackground(Color.decode("#00695C"));
@@ -289,21 +286,21 @@ public class VentanaAdministrador extends JPanel {
                         return;
                     }
 
-                    // Obtener el ID y el estado actual de la fila seleccionada
+                    // obtener el ID y el estado actual de la fila seleccionada
                     int idRep = (int) modelo.getValueAt(filaSeleccionada, 0);
                     String estadoActual = (String) modelo.getValueAt(filaSeleccionada, 5);
 
-                    // Alternar el estado entre Pendiente y Terminado
+                    // alternar el estado
                     String nuevoEstado = "Terminado".equalsIgnoreCase(estadoActual) ? "Pendiente" : "Terminado";
 
-                    // Actualizar en la BD
+                    // actualizar en la BD
                     ConexionBBDD bdActualizar = new ConexionBBDD();
                     boolean exito = bdActualizar.actualizarEstadoReparacion(idRep, nuevoEstado);
 
                     if (exito) {
-                        // Actualizar también el dato en la tabla para reflejar el cambio visualmente
+                        // actualizar el dato en la tabla
                         modelo.setValueAt(nuevoEstado, filaSeleccionada, 5);
-                        tabla.repaint(); // Forzar repintado para actualizar el color de fila
+                        tabla.repaint();
                         JOptionPane.showMessageDialog(null,
                                 "Estado de la reparación ID " + idRep + " cambiado a: " + nuevoEstado,
                                 "Estado actualizado", JOptionPane.INFORMATION_MESSAGE);
@@ -314,14 +311,15 @@ public class VentanaAdministrador extends JPanel {
                     }
                 });
 
-                // Panel inferior con leyenda y botón
+                // panel inferior
                 JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-                JLabel leyenda = new JLabel("🟠 Pendiente   🟢 Terminado   — Selecciona una fila y pulsa el botón para cambiar su estado");
+                JLabel leyenda = new JLabel(
+                        "🟠 Pendiente   🟢 Terminado   — Selecciona una fila y pulsa el botón para cambiar su estado");
                 leyenda.setFont(new Font("Arial", Font.ITALIC, 12));
                 panelInferior.add(leyenda);
                 panelInferior.add(btnCambiarEstado);
 
-                // Panel principal del diálogo
+                // panel principal del diálogo
                 JPanel panelDialogo = new JPanel(new BorderLayout(0, 10));
                 panelDialogo.add(scroll, BorderLayout.CENTER);
                 panelDialogo.add(panelInferior, BorderLayout.SOUTH);
@@ -331,17 +329,17 @@ public class VentanaAdministrador extends JPanel {
             }
         });
 
-        // --- Botón 4: Ver Base de Datos ---
+        // ver Base de Datos
         btnVerBBDD.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Obtener el resumen de clientes y reparaciones de la BD
+                // obtener el resumen de clientes y reparaciones
                 ConexionBBDD bd = new ConexionBBDD();
                 String contenido = bd.obtenerResumenBBDD();
 
-                // Mostrarlo en un área de texto con scroll para poder desplazarse
+                // mostrar en un área de texto con scroll
                 JTextArea areaTexto = new JTextArea(contenido);
-                areaTexto.setEditable(false); // Solo lectura
+                areaTexto.setEditable(false);
                 areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 12));
                 JScrollPane scroll = new JScrollPane(areaTexto);
                 scroll.setPreferredSize(new Dimension(600, 400));
@@ -351,18 +349,18 @@ public class VentanaAdministrador extends JPanel {
             }
         });
 
-        // --- Botón 4: Borrar cliente ---
+        // Borrar cliente
         btnBorrarCliente.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Pedir el nombre del cliente que se quiere borrar
+                // pedir el nombre del cliente que se quiere borrar
                 String nombreBorrar = JOptionPane.showInputDialog(
                         VentanaAdministrador.this,
                         "Introduce el nombre del cliente a borrar:",
                         "Borrar cliente", JOptionPane.WARNING_MESSAGE);
 
                 if (nombreBorrar != null && !nombreBorrar.trim().isEmpty()) {
-                    // Pedir confirmación antes de borrar (es una acción irreversible)
+                    // pedir confirmación antes de borrar
                     int confirm = JOptionPane.showConfirmDialog(
                             VentanaAdministrador.this,
                             "¿Seguro que deseas borrar al cliente '" + nombreBorrar.trim()
@@ -370,7 +368,7 @@ public class VentanaAdministrador extends JPanel {
                             "Confirmar borrado", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
                     if (confirm == JOptionPane.YES_OPTION) {
-                        // Llamar al método que borra el cliente en la BD
+                        // llamar al método que borra el cliente en la BD
                         ConexionBBDD bd = new ConexionBBDD();
                         boolean exito = bd.borrarCliente(nombreBorrar.trim());
 
@@ -388,22 +386,22 @@ public class VentanaAdministrador extends JPanel {
             }
         });
 
-        // --- Botón 5: Buscar reparación por cliente ---
+        // Buscar reparación por cliente
         btnBuscarReparacion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Pedir el nombre del cliente para buscar sus reparaciones
+                // pedir el nombre del cliente para buscar sus reparaciones
                 String nombreBuscar = JOptionPane.showInputDialog(
                         VentanaAdministrador.this,
                         "Introduce el nombre del cliente para buscar sus reparaciones:",
                         "Buscar reparación por cliente", JOptionPane.QUESTION_MESSAGE);
 
                 if (nombreBuscar != null && !nombreBuscar.trim().isEmpty()) {
-                    // Buscar en la BD las reparaciones de ese cliente
+                    // buscar en la BD las reparaciones de ese cliente
                     ConexionBBDD bd = new ConexionBBDD();
                     String resultado = bd.buscarReparacionesPorCliente(nombreBuscar.trim());
 
-                    // Mostrar el resultado en un área de texto con scroll
+                    // mostrar el resultado en un área de texto con scroll
                     JTextArea areaTexto = new JTextArea(resultado);
                     areaTexto.setEditable(false);
                     areaTexto.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -416,26 +414,26 @@ public class VentanaAdministrador extends JPanel {
             }
         });
 
-        // --- Botón 6: Calcular ingresos ---
+        // Calcular ingresos
         btnCalcularIngresos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Llamar al método que suma todos los costes de reparaciones
+                // llamar al método que suma todos los costes de reparaciones
                 ConexionBBDD bd = new ConexionBBDD();
                 double total = bd.calcularIngresosTotales();
 
-                // Mostrar el total formateado con 2 decimales
+                // mostrar el total formateado con 2 decimales
                 JOptionPane.showMessageDialog(VentanaAdministrador.this,
-                        String.format("💰 Ingresos totales del taller:\n\n   %.2f €", total),
+                        String.format("Ingresos totales del taller:\n\n   %.2f €", total),
                         "Calcular ingresos", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
-        // --- Botón 7: Salir / Cerrar Sesión ---
+        // Salir / Cerrar Sesión
         btnSalir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Volver a la pantalla de login cerrando la sesión
+                // volver a la pantalla de login cerrando la sesión
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(VentanaAdministrador.this);
                 if (frame != null) {
                     frame.setContentPane(new VentanaLogin());
@@ -446,7 +444,7 @@ public class VentanaAdministrador extends JPanel {
         });
     }
 
-    // Dibuja el fondo degradado de la ventana (de gris claro a azul muy suave)
+    // dibuja el fondo degradado de la ventana
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -461,34 +459,33 @@ public class VentanaAdministrador extends JPanel {
         g2.fillRect(0, 0, w, h);
     }
 
-    // Crea un botón con esquinas redondeadas y efecto hover (cambia de color al
-    // pasar el ratón)
+    // crea un botón con esquinas redondeadas y efecto hover
     private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
         JButton btn = new JButton(text) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // Cambiar el color según el estado del botón
+                // cambiar el color según el estado del botón
                 if (getModel().isPressed()) {
-                    g2.setColor(bgColor.darker()); // Más oscuro al hacer clic
+                    g2.setColor(bgColor.darker());
                 } else if (getModel().isRollover()) {
-                    g2.setColor(bgColor.brighter()); // Más claro al pasar el ratón
+                    g2.setColor(bgColor.brighter());
                 } else {
-                    g2.setColor(bgColor); // Color normal
+                    g2.setColor(bgColor);
                 }
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30); // Bordes redondeados
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 super.paintComponent(g2);
                 g2.dispose();
             }
         };
-        btn.setContentAreaFilled(false); // No pintar el fondo por defecto de Swing
-        btn.setFocusPainted(false); // Sin borde de foco al seleccionar con teclado
-        btn.setBorderPainted(false); // Sin borde estándar
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
         btn.setBackground(bgColor);
         btn.setForeground(fgColor);
         btn.setFont(new Font("Arial", Font.BOLD, 15));
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Cursor de mano al pasar por encima
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setPreferredSize(new Dimension(0, 50));
         return btn;
     }

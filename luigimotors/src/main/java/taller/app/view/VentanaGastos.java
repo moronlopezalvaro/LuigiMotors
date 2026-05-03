@@ -19,7 +19,6 @@ public class VentanaGastos extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        // ===== TÍTULO =====
         JPanel panelTitulo = new JPanel(new BorderLayout());
         panelTitulo.setOpaque(true);
         panelTitulo.setBackground(Color.decode("#1E3A5F"));
@@ -31,7 +30,7 @@ public class VentanaGastos extends JPanel {
         panelTitulo.add(lblTitulo, BorderLayout.CENTER);
         add(panelTitulo, BorderLayout.NORTH);
 
-        // ===== LISTA DE CITAS =====
+        // lista de citas
         JPanel panelCentral = new JPanel(new BorderLayout());
         panelCentral.setOpaque(false);
         panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
@@ -44,8 +43,10 @@ public class VentanaGastos extends JPanel {
         listCitas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listCitas.setCellRenderer(new DefaultListCellRenderer() {
             @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+                        cellHasFocus);
                 if (value instanceof Cita) {
                     Cita cita = (Cita) value;
                     label.setText("Cita: " + cita.getFecha() + " - " + cita.getMatricula());
@@ -60,7 +61,7 @@ public class VentanaGastos extends JPanel {
         panelCentral.add(scrollPane, BorderLayout.CENTER);
         add(panelCentral, BorderLayout.CENTER);
 
-        // ===== BOTONES =====
+        // botones
         JPanel panelBotones = new JPanel();
         panelBotones.setOpaque(false);
         panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 40, 20, 40));
@@ -72,17 +73,18 @@ public class VentanaGastos extends JPanel {
         panelBotones.add(btnVolver);
         add(panelBotones, BorderLayout.SOUTH);
 
-        // ACCIÓN: VER TICKET
+        // ver ticket
         btnVerTicket.addActionListener(e -> {
             Cita seleccionada = listCitas.getSelectedValue();
             if (seleccionada == null) {
-                JOptionPane.showMessageDialog(this, "Por favor, selecciona una cita de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Por favor, selecciona una cita de la lista.", "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
             mostrarTicket(seleccionada);
         });
 
-        // ACCIÓN: VOLVER
+        // volver
         btnVolver.addActionListener(e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
@@ -106,9 +108,9 @@ public class VentanaGastos extends JPanel {
         String[] datosPresupuesto = bd.obtenerPresupuesto(cita.getIdCita());
 
         if (datosPresupuesto == null) {
-            // Generar presupuesto usando el catálogo real
+            // generar presupuesto usando el catálogo real
             List<String[]> matches = bd.obtenerPreciosCatalogo(cita.getDescripcion());
-            
+
             String desglose;
             double manoObra;
             double total;
@@ -118,7 +120,7 @@ public class VentanaGastos extends JPanel {
                 double subtotalProductos = 0;
                 double maxManoObra = 0;
 
-                // Intentar extraer cantidad de la descripción (ej: "4 neumáticos")
+                // extraer cantidad de la descripción
                 int cantidad = 1;
                 java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\b([1-9])\\b");
                 java.util.regex.Matcher m = p.matcher(cita.getDescripcion());
@@ -131,7 +133,7 @@ public class VentanaGastos extends JPanel {
                     double mObraBase = Double.parseDouble(match[2]);
                     double precioProductoUnitario = pTotal - mObraBase;
 
-                    // Si la descripción menciona una cantidad, multiplicamos
+                    // si la descripción menciona una cantidad, multiplicamos
                     double precioProductoTotal = precioProductoUnitario * cantidad;
                     double manoObraTotal = mObraBase * cantidad;
 
@@ -140,13 +142,14 @@ public class VentanaGastos extends JPanel {
                         nombreConcepto += " (x" + cantidad + ")";
                     }
 
-                    sb.append(nombreConcepto).append(": ").append(String.format("%.2f", precioProductoTotal)).append("€\n");
+                    sb.append(nombreConcepto).append(": ").append(String.format("%.2f", precioProductoTotal))
+                            .append("€\n");
                     subtotalProductos += precioProductoTotal;
-                    
-                    // Sumamos la mano de obra proporcional a la cantidad
+
+                    // mano de obra proporcional a la cantidad
                     maxManoObra += manoObraTotal;
                 }
-                
+
                 desglose = sb.toString();
                 manoObra = maxManoObra;
                 total = subtotalProductos + manoObra;
@@ -156,17 +159,16 @@ public class VentanaGastos extends JPanel {
                 manoObra = 40.0;
                 total = 80.0;
             }
-            
+
             bd.guardarPresupuesto(cita.getIdCita(), desglose, manoObra, total);
-            datosPresupuesto = new String[]{desglose, String.valueOf(manoObra), String.valueOf(total)};
+            datosPresupuesto = new String[] { desglose, String.valueOf(manoObra), String.valueOf(total) };
         }
 
-        // Mostrar el JDialog tipo ticket
-        DialogoTicket ticket = new DialogoTicket((JFrame) SwingUtilities.getWindowAncestor(this), cita, datosPresupuesto);
+        // mostrar el JDialog tipo ticket
+        DialogoTicket ticket = new DialogoTicket((JFrame) SwingUtilities.getWindowAncestor(this), cita,
+                datosPresupuesto);
         ticket.setVisible(true);
     }
-
-
 
     private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
         JButton btn = new JButton(text) {
@@ -174,9 +176,12 @@ public class VentanaGastos extends JPanel {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isPressed()) g2.setColor(bgColor.darker());
-                else if (getModel().isRollover()) g2.setColor(bgColor.brighter());
-                else g2.setColor(bgColor);
+                if (getModel().isPressed())
+                    g2.setColor(bgColor.darker());
+                else if (getModel().isRollover())
+                    g2.setColor(bgColor.brighter());
+                else
+                    g2.setColor(bgColor);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 super.paintComponent(g2);
                 g2.dispose();
@@ -192,7 +197,7 @@ public class VentanaGastos extends JPanel {
         return btn;
     }
 
-    // CLASE INTERNA PARA EL DIÁLOGO DEL TICKET
+    // clase interna para el diálogo del ticket
     class DialogoTicket extends JDialog {
         public DialogoTicket(Frame owner, Cita cita, String[] presupuesto) {
             super(owner, "Presupuesto Estimado", true);
@@ -217,7 +222,7 @@ public class VentanaGastos extends JPanel {
             JLabel lblTaller = new JLabel("LUIGI MOTORS S.L.");
             lblTaller.setFont(titleFont);
             lblTaller.setAlignmentX(Component.CENTER_ALIGNMENT);
-            
+
             JLabel lblSeparador1 = new JLabel("--------------------------");
             lblSeparador1.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -226,16 +231,15 @@ public class VentanaGastos extends JPanel {
             txtInfo.setEditable(false);
             txtInfo.setOpaque(false);
             txtInfo.setText(
-                "FECHA: " + cita.getFecha() + "\n" +
-                "MATRICULA: " + cita.getMatricula() + "\n" +
-                "CLIENTE: " + nombreCliente + "\n\n" +
-                "DESCRIPCION:\n" + cita.getDescripcion() + "\n" +
-                "--------------------------\n" +
-                "CONCEPTOS:\n" + presupuesto[0] +
-                "MANO DE OBRA: " + String.format("%.2f", Double.parseDouble(presupuesto[1])) + "€\n" +
-                "--------------------------\n\n" +
-                "TOTAL ESTIMADO: " + String.format("%.2f", Double.parseDouble(presupuesto[2])) + "€"
-            );
+                    "FECHA: " + cita.getFecha() + "\n" +
+                            "MATRICULA: " + cita.getMatricula() + "\n" +
+                            "CLIENTE: " + nombreCliente + "\n\n" +
+                            "DESCRIPCION:\n" + cita.getDescripcion() + "\n" +
+                            "--------------------------\n" +
+                            "CONCEPTOS:\n" + presupuesto[0] +
+                            "MANO DE OBRA: " + String.format("%.2f", Double.parseDouble(presupuesto[1])) + "€\n" +
+                            "--------------------------\n\n" +
+                            "TOTAL ESTIMADO: " + String.format("%.2f", Double.parseDouble(presupuesto[2])) + "€");
 
             panelTicket.add(lblTaller);
             panelTicket.add(Box.createVerticalStrut(10));

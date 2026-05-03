@@ -1,32 +1,11 @@
 package taller.app.view;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
 
+// Esta pantalla muestra un formulario para que el cliente pueda pedir una cita.
 public class VentanaPedirCita extends JPanel {
 
     private String nombreCliente;
@@ -34,19 +13,16 @@ public class VentanaPedirCita extends JPanel {
     public VentanaPedirCita(String nombreCliente) {
         this.nombreCliente = nombreCliente;
         setLayout(new BorderLayout());
-        setOpaque(false); // Para el fondo degradado
+        setOpaque(false);
 
-        // ===== TÍTULO =====
         JPanel panelTitulo = new JPanel(new BorderLayout());
         panelTitulo.setOpaque(true);
         panelTitulo.setBackground(Color.decode("#1E3A5F"));
         panelTitulo.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(15, 20, 10, 20),
-                BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)
-            ),
-            BorderFactory.createEmptyBorder(15, 20, 15, 20)
-        ));
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createEmptyBorder(15, 20, 10, 20),
+                        BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)),
+                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
 
         JLabel lblTitulo = new JLabel("Pedir Cita", JLabel.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
@@ -54,57 +30,63 @@ public class VentanaPedirCita extends JPanel {
         panelTitulo.add(lblTitulo, BorderLayout.CENTER);
         add(panelTitulo, BorderLayout.NORTH);
 
-        // ===== FORMULARIO CENTRAL =====
+        // formulario para pedir cita
         JPanel panelFormulario = new JPanel(new GridBagLayout());
         panelFormulario.setOpaque(true);
         panelFormulario.setBackground(Color.decode("#F5F5F5"));
         panelFormulario.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2),
-            BorderFactory.createEmptyBorder(20, 40, 20, 40)
-        ));
+                BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2),
+                BorderFactory.createEmptyBorder(20, 40, 20, 40)));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // --- Fecha (formato americano: YYYY-MM-DD) ---
+        // fecha en formato americano
         JLabel lblFecha = new JLabel("Fecha (YYYY-MM-DD):");
         lblFecha.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.gridwidth = 1;
         panelFormulario.add(lblFecha, gbc);
 
         JTextField txtFecha = new JTextField(15);
         txtFecha.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
         panelFormulario.add(txtFecha, gbc);
 
-        // --- Hora ---
+        // hora
         JLabel lblHora = new JLabel("Hora:");
         lblHora.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         panelFormulario.add(lblHora, gbc);
 
-        String[] horas = {"09:00", "10:00", "11:00", "12:00", "13:00",
-                          "16:00", "17:00", "18:00"};
+        String[] horas = { "09:00", "10:00", "11:00", "12:00", "13:00",
+                "16:00", "17:00", "18:00" };
         JComboBox<String> comboHora = new JComboBox<>(horas);
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
         panelFormulario.add(comboHora, gbc);
 
-        // --- Matrícula ---
+        // matrícula
         JLabel lblMatricula = new JLabel("Matrícula del vehículo:");
         lblMatricula.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         panelFormulario.add(lblMatricula, gbc);
 
         JTextField txtMatricula = new JTextField(15);
         txtMatricula.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
         panelFormulario.add(txtMatricula, gbc);
 
-        // --- Descripción ---
+        // descripción
         JLabel lblDescripcion = new JLabel("Descripción del problema:");
         lblDescripcion.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         panelFormulario.add(lblDescripcion, gbc);
 
@@ -113,7 +95,8 @@ public class VentanaPedirCita extends JPanel {
         txtDescripcion.setWrapStyleWord(true);
         txtDescripcion.setFont(new Font("Arial", Font.PLAIN, 13));
         JScrollPane scrollDescripcion = new JScrollPane(txtDescripcion);
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
@@ -125,7 +108,6 @@ public class VentanaPedirCita extends JPanel {
         wrapperFormulario.add(panelFormulario);
         add(wrapperFormulario, BorderLayout.CENTER);
 
-        // ===== BOTONES INFERIORES =====
         JPanel panelBotones = new JPanel();
         panelBotones.setOpaque(false);
         panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 40, 20, 40));
@@ -137,75 +119,75 @@ public class VentanaPedirCita extends JPanel {
         panelBotones.add(btnVolver);
         add(panelBotones, BorderLayout.SOUTH);
 
-        // ===== ACCIÓN: CONFIRMAR CITA =====
+        // confirmar cita
         btnGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Leer datos del formulario
+                // leer datos del formulario
                 String fecha = txtFecha.getText().trim();
                 String hora = (String) comboHora.getSelectedItem();
                 String matricula = txtMatricula.getText().trim();
                 String descripcion = txtDescripcion.getText().trim();
 
-                // Validar campos no vacíos
+                // validar campos no vacíos
                 if (fecha.isEmpty()) {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "Por favor, introduce la fecha en formato YYYY-MM-DD.",
-                        "Campo vacío", JOptionPane.WARNING_MESSAGE);
+                            "Por favor, introduce la fecha en formato YYYY-MM-DD.",
+                            "Campo vacío", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                // Validar formato de fecha (YYYY-MM-DD)
+                // validar formato de fecha (YYYY-MM-DD)
                 if (!fecha.matches("\\d{4}-\\d{2}-\\d{2}")) {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "El formato de la fecha debe ser YYYY-MM-DD.\nEjemplo: 2026-05-15",
-                        "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
+                            "El formato de la fecha debe ser YYYY-MM-DD.\nEjemplo: 2026-05-15",
+                            "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
                 if (matricula.isEmpty()) {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "Por favor, introduce la matrícula de tu vehículo.",
-                        "Campo vacío", JOptionPane.WARNING_MESSAGE);
+                            "Por favor, introduce la matrícula de tu vehículo.",
+                            "Campo vacío", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
                 if (descripcion.isEmpty()) {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "Por favor, describe el problema de tu vehículo.",
-                        "Campo vacío", JOptionPane.WARNING_MESSAGE);
+                            "Por favor, describe el problema de tu vehículo.",
+                            "Campo vacío", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
-                // Comprobar disponibilidad
+                // comprobar disponibilidad
                 ConexionBBDD bd = new ConexionBBDD();
                 if (bd.citaOcupada(fecha, hora)) {
-                    // Día/hora ocupado -> mostrar JDialog
+                    // día/hora ocupado -> mostrar JDialog
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "Lo sentimos, el día " + fecha + " a las " + hora +
-                        " ya está ocupado por otro cliente.\nPor favor, elige otra fecha u hora.",
-                        "Cita no disponible", JOptionPane.ERROR_MESSAGE);
+                            "Lo sentimos, el día " + fecha + " a las " + hora +
+                                    " ya está ocupado por otro cliente.\nPor favor, elige otra fecha u hora.",
+                            "Cita no disponible", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // Guardar la cita
+                // guardar la cita
                 boolean exito = bd.guardarCita(fecha, hora, matricula, descripcion, nombreCliente);
                 if (exito) {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "¡Cita confirmada!\nFecha: " + fecha + "\nHora: " + hora +
-                        "\nMatrícula: " + matricula,
-                        "Cita guardada", JOptionPane.INFORMATION_MESSAGE);
-                    // Volver a VentanaInicial
+                            "¡Cita confirmada!\nFecha: " + fecha + "\nHora: " + hora +
+                                    "\nMatrícula: " + matricula,
+                            "Cita guardada", JOptionPane.INFORMATION_MESSAGE);
+                    // volver a VentanaInicial
                     volverAInicio();
                 } else {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
-                        "Error al guardar la cita. Inténtalo de nuevo.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                            "Error al guardar la cita. Inténtalo de nuevo.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        // ===== ACCIÓN: VOLVER =====
+        // volver a VentanaInicial
         btnVolver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -214,7 +196,7 @@ public class VentanaPedirCita extends JPanel {
         });
     }
 
-    // Volver a la pantalla principal
+    // volver a la pantalla principal
     private void volverAInicio() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {

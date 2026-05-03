@@ -1,98 +1,85 @@
 package taller.app.controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.File;
+import java.sql.*;
+import java.io.*;
+import java.util.*;
 import taller.app.model.Cliente;
 import taller.app.model.Reparacion;
 import taller.app.model.Cita;
-import java.util.List;
-import java.util.ArrayList;
 
-// Clase que gestiona la conexión y todas las operaciones con la base de datos
 public class ConexionBBDD {
 
-    // Datos de conexión al servidor MySQL
-    private static final String DRIVER = "com.mysql.cj.jdbc.Driver"; // Driver JDBC de MySQL
-    private static final String URL = "jdbc:mysql://localhost:3306/luigimotors"; // Dirección de la BD
-    private static final String USUARIO = "root"; // Usuario de MySQL
-    private static final String PASSWORD = ""; // Contraseña (vacía por defecto en local)
+    // driver JDBC
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    // dirección de la BBDD MySQL
+    private static final String URL = "jdbc:mysql://localhost:3306/luigimotors";
+    // usuario y contraseña de acceso a la BD
+    private static final String USUARIO = "root";
+    private static final String PASSWORD = "";
 
-    // Método para abrir la conexión con la base de datos
     public Connection conectar() {
         Connection conexion = null;
 
         try {
-            // Cargar el driver de MySQL
             Class.forName(DRIVER);
-            // Conectar con usuario y contraseña
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
             System.out.println("Conexión OK");
 
         } catch (ClassNotFoundException e) {
-            // El driver no se encontró en el proyecto
             System.out.println("Error al cargar el controlador");
             e.printStackTrace();
 
         } catch (SQLException e) {
-            // Error al intentar conectar con la BD
             System.out.println("Error en la conexión");
             e.printStackTrace();
         }
         return conexion;
     }
 
-    // Método para cerrar la conexión cuando ya no se necesita
+    // método para cerrar la conexión cuando ya no se necesita
     public void cerrarConexion(Connection conection) {
         try {
-            // Cierre de la conexión
+            // cierre de la conexión
             conection.close();
         } catch (SQLException e) {
             System.err.println("Se ha producido un error al cerrar la conexión");
         }
     }
 
-    // Inserta un cliente de prueba en la BD (usado para testing)
+    // inserta un cliente de prueba en la BD (usado para testing)
     public void insertData() throws SQLException {
         Connection conexion = conectar();
         try {
-            // Consulta SQL para insertar un cliente de ejemplo
+            // insercción de un cliente de ejemplo
             String consultasInserccion = "INSERT INTO cliente (dni, nombre, telefono, contrasenya, rol) VALUES ('00000000Z', 'Cliente Prueba', '600000000', '1234', 'Cliente');";
             System.out.println(consultasInserccion);
-            // Creación del Statement para poder reqalizar la consulta
+            // creación del Statement para poder realizar la consulta
             Statement consul = conexion.createStatement();
-            // Ejecución de la consulta
+            // ejecución de la consulta
             consul.executeUpdate(consultasInserccion);
             System.out.println("Datos insertados correctamente");
-            // Cierre del Statement
+            // cierre del Statement
             consul.close();
         } finally {
-            // Cierre de la conexión
+            // cierre de la conexión
             cerrarConexion(conexion);
         }
     }
 
-    // Obtiene todos los clientes de la BD y los muestra por consola
+    // obtiene todos los clientes de la BD y los muestra por consola
     public void getData() throws SQLException {
         Connection conexion = conectar();
 
         if (conexion != null) {
             try {
-                // Consulta para seleccionar todos los clientes
+                // selección de todos los clientes
                 String consultasSeleccion = "SELECT * FROM cliente";
                 System.out.println(consultasSeleccion);
                 Statement consul = conexion.createStatement();
-                // Ejecución de la consulta
+                // ejecución de la consulta
                 if (consul.execute(consultasSeleccion)) {
                     ResultSet resultset = consul.getResultSet();
-                    // Recorrer cada fila y crear un objeto Cliente
+                    // recorre cada fila y crea un objeto Cliente
                     while (resultset.next()) {
                         Cliente cliente = new Cliente(
                                 resultset.getInt("id_cliente"),
@@ -106,50 +93,50 @@ public class ConexionBBDD {
 
                     System.out.println("Datos recuperados correctamente");
                 }
-                // Cierre del Statement
+                // cierre del Statement
                 consul.close();
 
             } finally {
-                // Cierre de la conexión
+                // cierre de la conexión
                 cerrarConexion(conexion);
             }
         }
     }
 
-    // Inserta una reparación de ejemplo en la BD (usado para testing)
+    // inserta una reparación de ejemplo en la BD (usado para testing)
     public void insertDataReparacion() throws SQLException {
         Connection conexion = conectar();
         try {
-            // Consulta SQL de ejemplo con datos fijos
+            // consulta SQL de ejemplo con datos fijos
             String consultasInserccion = "INSERT INTO reparacion (matricula, descripcion, coste, fecha_ingreso, estado, id_cliente) VALUES ('1234ABC', 'Cambio de aceite', 50.0, '2024-05-10', 'Terminado', 2);";
             System.out.println(consultasInserccion);
-            // Creación del Statement para poder realizar la consulta
+            // creación del Statement para poder realizar la consulta
             Statement consul = conexion.createStatement();
-            // Ejecución de la consulta
+            // ejecución de la consulta
             consul.executeUpdate(consultasInserccion);
             System.out.println("Datos de reparación insertados correctamente");
-            // Cierre del Statement
+            // cierre del Statement
             consul.close();
         } finally {
-            // Cierre de la conexión
+            // cierre de la conexión
             cerrarConexion(conexion);
         }
     }
 
-    // Obtiene todas las reparaciones de la BD y las muestra por consola
+    // obtiene todas las reparaciones de la BD y las muestra por consola
     public void getDataReparacion() throws SQLException {
         Connection conexion = conectar();
 
         if (conexion != null) {
             try {
-                // Consulta para seleccionar todas las reparaciones
+                // consulta para seleccionar todas las reparaciones
                 String consultasSeleccion = "SELECT * FROM reparacion";
                 System.out.println(consultasSeleccion);
                 Statement consul = conexion.createStatement();
-                // Ejecución de la consulta
+                // ejecución de la consulta
                 if (consul.execute(consultasSeleccion)) {
                     ResultSet resultset = consul.getResultSet();
-                    // Recorrer cada fila y crear un objeto Reparacion
+                    // recorre cada fila y crea un objeto Reparacion
                     while (resultset.next()) {
                         Reparacion reparacion = new Reparacion(
                                 resultset.getInt("id_reparacion"),
@@ -164,39 +151,40 @@ public class ConexionBBDD {
 
                     System.out.println("Datos de reparación recuperados correctamente");
                 }
-                // Cierre del Statement
+                // cierre del Statement
                 consul.close();
 
             } finally {
-                // Cierre de la conexión
+                // cierre de la conexión
                 cerrarConexion(conexion);
             }
         }
     }
 
-    // Comprueba el login y devuelve el rol ("Administrador", "Cliente") o null si no existe
+    // valida el usuario y contraseña y devuelve el rol ("Administrador", "Cliente")
+    // o null si no existe
     public String validarLoginCliente(String nombre, String contrasena) {
         Connection conexion = conectar();
         if (conexion != null) {
             try {
-                // Buscar el usuario que coincida con nombre y contraseña
+                // buscar el usuario que coincida con nombre y contraseña
                 String consulta = "SELECT rol FROM cliente WHERE nombre = ? AND contrasenya = ?";
                 PreparedStatement pstmt = conexion.prepareStatement(consulta);
                 pstmt.setString(1, nombre);
                 pstmt.setString(2, contrasena);
 
-                // Ejecutar y obtener el rol si el usuario existe
+                // ejecutar y obtener el rol si el usuario existe
                 ResultSet rs = pstmt.executeQuery();
                 String rol = null;
                 if (rs.next()) {
-                    rol = rs.getString("rol"); // Leer el campo rol de la fila encontrada
+                    rol = rs.getString("rol"); // leer el campo rol de la fila encontrada
                 }
 
-                // Cerrar recursos
+                // cerrar recursos
                 rs.close();
                 pstmt.close();
 
-                return rol; // Devuelve el rol o null si el usuario no existe
+                return rol; // devuelve el rol o null si el usuario no existe
             } catch (SQLException e) {
                 System.out.println("Error al validar login de cliente");
                 e.printStackTrace();
@@ -208,7 +196,7 @@ public class ConexionBBDD {
         return null;
     }
 
-    // Registra un nuevo cliente en la BD con rol "Cliente"
+    // registra un nuevo cliente en la BD con rol "Cliente"
     public boolean registrarNuevoCliente(String dni, String nombre, String telefono, String contrasena) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -221,12 +209,12 @@ public class ConexionBBDD {
                 pstmt.setString(3, telefono);
                 pstmt.setString(4, contrasena);
 
-                // Ejecutar y ver si se insertó alguna fila
+                // ejecutar y ver si se insertó alguna fila
                 int filasAfectadas = pstmt.executeUpdate();
                 pstmt.close();
 
                 if (filasAfectadas > 0) {
-                    // Si se guardó en BD, también lo añadimos al archivo .sql
+                    // si se guardó en BD, también lo añadimos al archivo .sql
                     guardarEnArchivoSQL(dni, nombre, telefono, contrasena);
                     return true;
                 }
@@ -240,25 +228,25 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Guarda el INSERT del nuevo cliente también en el archivo database.sql
+    // guarda el INSERT del nuevo cliente también en el archivo database.sql
     private void guardarEnArchivoSQL(String dni, String nombre, String telefono, String contrasena) {
-        // Intentar encontrar el archivo database.sql en varias rutas posibles
+        // intentar encontrar el archivo database.sql en varias rutas posibles
         String baseDir = System.getProperty("user.dir");
         File archivoSQL = new File(baseDir, "database.sql");
         if (!archivoSQL.exists()) {
             archivoSQL = new File(baseDir, "luigimotors/database.sql");
         }
         if (!archivoSQL.exists()) {
-            // Ruta absoluta como último recurso
+            // ruta absoluta como último recurso
             archivoSQL = new File(
                     "c:/Users/iLERNA/OneDrive - Ilerna/Programación/Trimestre 3/Actividad 8/PROYECTO-FINAL-PROG/luigimotors/database.sql");
         }
 
-        // Abrir el archivo en modo append (true = añadir al final, no sobreescribir)
+        // abrir el archivo en modo append (true = añadir al final, no sobreescribir)
         try (FileWriter fw = new FileWriter(archivoSQL, true);
                 BufferedWriter bw = new BufferedWriter(fw)) {
 
-            // Formatear la sentencia INSERT con los datos del cliente
+            // formatear la sentencia INSERT con los datos del cliente
             String insert = String.format(
                     "\nINSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES \n('%s', '%s', '%s', '%s', 'Cliente');",
                     dni, nombre, telefono, contrasena);
@@ -270,7 +258,7 @@ public class ConexionBBDD {
         }
     }
 
-    // Devuelve el id_cliente buscando por nombre (lo usamos en otras consultas)
+    // devuelve el id_cliente buscando por nombre (lo usamos en otras consultas)
     public int obtenerIdCliente(String nombre) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -281,7 +269,7 @@ public class ConexionBBDD {
                 pstmt.setString(1, nombre);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    // Si existe, devolver su ID
+                    // devolver su ID
                     int id = rs.getInt("id_cliente");
                     rs.close();
                     pstmt.close();
@@ -299,7 +287,7 @@ public class ConexionBBDD {
         return -1; // -1 significa que no se encontró el cliente
     }
 
-    // Comprueba si ya hay una cita en esa fecha y hora (para evitar duplicados)
+    // comprueba si ya hay una cita en esa fecha y hora (para evitar duplicados)
     public boolean citaOcupada(String fecha, String hora) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -311,7 +299,7 @@ public class ConexionBBDD {
                 pstmt.setString(2, hora);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    // Si el contador es mayor que 0, está ocupada
+                    // si el contador es mayor que 0, está ocupada
                     boolean ocupada = rs.getInt(1) > 0;
                     rs.close();
                     pstmt.close();
@@ -329,9 +317,9 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Guarda una nueva cita en la BD vinculada al cliente
+    // guarda una nueva cita en la BD vinculada al cliente
     public boolean guardarCita(String fecha, String hora, String matricula, String descripcion, String nombreCliente) {
-        // Primero obtenemos el ID del cliente por su nombre
+        // primero obtenemos el ID del cliente por su nombre
         int idCliente = obtenerIdCliente(nombreCliente);
         if (idCliente == -1) {
             System.out.println("No se encontró el cliente: " + nombreCliente);
@@ -363,11 +351,12 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Devuelve una lista con las citas de un cliente
+    // devuelve una lista con las citas de un cliente
     public List<Cita> obtenerCitasCliente(String nombreCliente) {
         int idCliente = obtenerIdCliente(nombreCliente);
         List<Cita> lista = new ArrayList<>();
-        if (idCliente == -1) return lista;
+        if (idCliente == -1)
+            return lista;
 
         Connection conexion = conectar();
         if (conexion != null) {
@@ -384,8 +373,7 @@ public class ConexionBBDD {
                             rs.getString("hora"),
                             rs.getString("matricula"),
                             rs.getString("descripcion"),
-                            rs.getInt("id_cliente")
-                    );
+                            rs.getInt("id_cliente"));
                     lista.add(c);
                 }
 
@@ -401,7 +389,7 @@ public class ConexionBBDD {
         return lista;
     }
 
-    // Obtiene el presupuesto de una cita (si existe)
+    // obtiene el presupuesto de una cita (si existe)
     public String[] obtenerPresupuesto(int idCita) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -431,7 +419,7 @@ public class ConexionBBDD {
         return null;
     }
 
-    // Guarda un presupuesto generado para una cita
+    // guarda un presupuesto generado para una cita
     public boolean guardarPresupuesto(int idCita, String desglose, double manoObra, double total) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -456,7 +444,7 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Busca en el catálogo de reparaciones si alguna coincide con la descripción
+    // busca en el catálogo de reparaciones si alguna coincide con la descripción
     public java.util.List<String[]> obtenerPreciosCatalogo(String descripcion) {
         java.util.List<String[]> resultados = new java.util.ArrayList<>();
         Connection conexion = conectar();
@@ -467,43 +455,46 @@ public class ConexionBBDD {
                 ResultSet rs = stmt.executeQuery(consulta);
 
                 String descLower = descripcion.toLowerCase();
-                // Limpiamos la descripción de caracteres extraños por si acaso
-                descLower = descLower.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n");
+                // limpiamos la descripción de caracteres extraños por si acaso
+                descLower = descLower.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o")
+                        .replace("ú", "u").replace("ñ", "n");
 
                 while (rs.next()) {
                     String nombre = rs.getString("nombre");
-                    String nombreLower = nombre.toLowerCase().replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n");
+                    String nombreLower = nombre.toLowerCase().replace("á", "a").replace("é", "e").replace("í", "i")
+                            .replace("ó", "o").replace("ú", "u").replace("ñ", "n");
 
-                    // Dividimos en palabras clave para buscar coincidencias
+                    // dividimos en palabras clave para buscar coincidencias
                     String[] palabrasNombre = nombreLower.split("[\\s+()]");
                     int palabrasEncontradas = 0;
-                    
+
                     for (String palabra : palabrasNombre) {
-                        // Ignoramos palabras genéricas y muy cortas
-                        if (palabra.length() > 3 
-                            && !palabra.equals("cambio") 
-                            && !palabra.equals("reparacion") 
-                            && !palabra.equals("sustitucion")
-                            && !palabra.equals("limpieza")) {
-                            
+                        // ignoramos palabras genéricas y muy cortas
+                        if (palabra.length() > 3
+                                && !palabra.equals("cambio")
+                                && !palabra.equals("reparacion")
+                                && !palabra.equals("sustitucion")
+                                && !palabra.equals("limpieza")) {
+
                             if (descLower.contains(palabra)) {
                                 palabrasEncontradas++;
                             }
                         }
                     }
 
-                    // Si hemos encontrado palabras clave específicas (ej: "turbo", "aceite")
-                    // O si el nombre coincide exactamente
+                    // si hemos encontrado palabras clave específicas (ej: "turbo", "aceite")
+                    // o si el nombre coincide exactamente
                     if (palabrasEncontradas > 0 || descLower.equals(nombreLower)) {
                         String[] datos = new String[3];
                         datos[0] = nombre;
                         datos[1] = String.valueOf(rs.getDouble("precio_total"));
                         datos[2] = String.valueOf(rs.getDouble("mano_obra"));
                         resultados.add(datos);
-                        
-                        // Si encontramos una coincidencia fuerte, podemos parar de buscar otras
+
+                        // si encontramos una coincidencia fuerte, podemos parar de buscar otras
                         // para evitar que salgan demasiadas cosas en el ticket
-                        if (descLower.contains(nombreLower)) break; 
+                        if (descLower.contains(nombreLower))
+                            break;
                     }
                 }
                 rs.close();
@@ -518,11 +509,7 @@ public class ConexionBBDD {
         return resultados;
     }
 
-    // =====================================================================
-    // MÉTODOS PARA EL PANEL DE ADMINISTRACIÓN
-    // =====================================================================
-
-    // Inserta una nueva reparación en la tabla reparacion
+    // inserta una nueva reparación en la tabla reparacion
     public boolean insertarReparacion(String matricula, String descripcion, double coste,
             String fecha, String estado, int idCliente) {
         Connection conexion = conectar();
@@ -551,22 +538,20 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Devuelve un texto con todos los clientes y reparaciones para mostrar en pantalla
+    // devuelve un texto con todos los clientes y reparaciones para mostrar en
+    // pantalla
     public String obtenerResumenBBDD() {
         Connection conexion = conectar();
-        StringBuilder sb = new StringBuilder(); // Usamos StringBuilder para ir construyendo el texto
+        StringBuilder sb = new StringBuilder(); // usamos StringBuilder para ir construyendo el texto
 
         if (conexion != null) {
             try {
-                // --- Sección clientes ---
                 sb.append("============================\n");
                 sb.append("         CLIENTES\n");
                 sb.append("============================\n");
                 Statement stmt = conexion.createStatement();
-                // SELECT de los campos que queremos mostrar
                 ResultSet rs = stmt.executeQuery("SELECT id_cliente, dni, nombre, telefono, rol FROM cliente");
                 while (rs.next()) {
-                    // Formatear cada cliente en una línea
                     sb.append(String.format("ID: %d | DNI: %s | Nombre: %s | Tel: %s | Rol: %s\n",
                             rs.getInt("id_cliente"),
                             rs.getString("dni"),
@@ -576,14 +561,12 @@ public class ConexionBBDD {
                 }
                 rs.close();
 
-                // --- Sección reparaciones ---
                 sb.append("\n============================\n");
                 sb.append("       REPARACIONES\n");
                 sb.append("============================\n");
                 rs = stmt.executeQuery(
                         "SELECT id_reparacion, matricula, descripcion, coste, fecha_ingreso, estado, id_cliente FROM reparacion");
                 while (rs.next()) {
-                    // Formatear cada reparación en una línea
                     sb.append(String.format(
                             "ID: %d | Matrícula: %s | Desc: %s | Coste: %.2f€ | Fecha: %s | Estado: %s | ClienteID: %d\n",
                             rs.getInt("id_reparacion"),
@@ -611,7 +594,7 @@ public class ConexionBBDD {
         return sb.toString();
     }
 
-    // Borra un cliente de la BD buscándolo por nombre
+    // borra un cliente de la BD buscándolo por nombre
     public boolean borrarCliente(String nombre) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -623,7 +606,7 @@ public class ConexionBBDD {
 
                 int filas = pstmt.executeUpdate();
                 pstmt.close();
-                return filas > 0; // True si se borró al menos un cliente
+                return filas > 0; // true si se borró al menos un cliente
             } catch (SQLException e) {
                 System.out.println("Error al borrar el cliente");
                 e.printStackTrace();
@@ -634,18 +617,18 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Busca y devuelve todas las reparaciones que tiene un cliente por su nombre
+    // busca y devuelve todas las reparaciones que tiene un cliente por su nombre
     public String buscarReparacionesPorCliente(String nombreCliente) {
         Connection conexion = conectar();
         StringBuilder sb = new StringBuilder();
 
         if (conexion != null) {
             try {
-                // Primero obtenemos el ID del cliente para usarlo en el SELECT
+                // primero obtenemos el ID del cliente para usarlo en el SELECT
                 int idCliente = obtenerIdCliente(nombreCliente);
 
                 if (idCliente == -1) {
-                    // Si no existe el cliente, avisamos
+                    // si no existe el cliente, avisamos
                     return "No se encontró ningún cliente con el nombre: " + nombreCliente;
                 }
 
@@ -661,7 +644,6 @@ public class ConexionBBDD {
                 boolean hayReparaciones = false;
                 while (rs.next()) {
                     hayReparaciones = true;
-                    // Formatear cada reparación con sus datos
                     sb.append(String.format(
                             "ID: %d | Matrícula: %s\nDescripción: %s\nCoste: %.2f€ | Fecha: %s | Estado: %s\n\n",
                             rs.getInt("id_reparacion"),
@@ -672,7 +654,6 @@ public class ConexionBBDD {
                             rs.getString("estado")));
                 }
 
-                // Si no había ninguna, mostramos un mensaje
                 if (!hayReparaciones) {
                     sb.append("Este cliente no tiene reparaciones registradas.");
                 }
@@ -694,7 +675,7 @@ public class ConexionBBDD {
         return sb.toString();
     }
 
-    // Devuelve una lista con todas las reparaciones de la BD
+    // devuelve una lista con todas las reparaciones de la BD
     public java.util.List<Reparacion> obtenerTodasLasReparaciones() {
         Connection conexion = conectar();
         java.util.List<Reparacion> lista = new java.util.ArrayList<>();
@@ -707,7 +688,7 @@ public class ConexionBBDD {
                 ResultSet rs = pstmt.executeQuery();
 
                 while (rs.next()) {
-                    // Crear un objeto Reparacion por cada fila y añadirlo a la lista
+                    // crear un objeto Reparacion por cada fila y añadirlo a la lista
                     Reparacion r = new Reparacion(
                             rs.getInt("id_reparacion"),
                             rs.getString("matricula"),
@@ -730,10 +711,10 @@ public class ConexionBBDD {
             }
         }
 
-        return lista; // Devuelve la lista (puede estar vacía si no hay reparaciones)
+        return lista; // devuelve la lista (puede estar vacía si no hay reparaciones)
     }
 
-    // Actualiza el estado de una reparación según su ID (Pendiente <-> Terminado)
+    // actualiza el estado de una reparación según su ID (Pendiente <-> Terminado)
     public boolean actualizarEstadoReparacion(int idReparacion, String nuevoEstado) {
         Connection conexion = conectar();
         if (conexion != null) {
@@ -748,7 +729,6 @@ public class ConexionBBDD {
                 pstmt.close();
 
                 if (filas > 0) {
-                    // Si se actualizó en MySQL, también lo guardamos en el archivo .sql
                     guardarActualizacionEstadoEnSQL(idReparacion, nuevoEstado);
                     return true;
                 }
@@ -762,25 +742,25 @@ public class ConexionBBDD {
         return false;
     }
 
-    // Guarda el UPDATE del estado en el archivo database.sql para tener persistencia total
+    // guarda el UPDATE del estado en el archivo database.sql
     private void guardarActualizacionEstadoEnSQL(int idReparacion, String nuevoEstado) {
-        // Intentar encontrar el archivo database.sql en varias rutas posibles
+        // intentar encontrar el archivo database.sql en varias rutas posibles
         String baseDir = System.getProperty("user.dir");
         File archivoSQL = new File(baseDir, "database.sql");
         if (!archivoSQL.exists()) {
             archivoSQL = new File(baseDir, "luigimotors/database.sql");
         }
         if (!archivoSQL.exists()) {
-            // Ruta absoluta como último recurso
+            // ruta absoluta como último recurso
             archivoSQL = new File(
                     "c:/Users/iLERNA/OneDrive - Ilerna/Programación/Trimestre 3/Actividad 8/LuigiMotors/luigimotors/database.sql");
         }
 
-        // Abrir el archivo en modo append (true = añadir al final, no sobreescribir)
+        // abrir el archivo en modo append
         try (FileWriter fw = new FileWriter(archivoSQL, true);
                 BufferedWriter bw = new BufferedWriter(fw)) {
 
-            // Formatear la sentencia UPDATE con el nuevo estado y el ID de la reparación
+            // formatear la sentencia UPDATE con el nuevo estado y el ID de la reparación
             String update = String.format(
                     "\nUPDATE reparacion SET estado = '%s' WHERE id_reparacion = %d;",
                     nuevoEstado, idReparacion);
@@ -792,7 +772,7 @@ public class ConexionBBDD {
         }
     }
 
-    // Suma el coste de todas las reparaciones y devuelve el total de ingresos
+    // suma el coste de todas las reparaciones y devuelve el total de ingresos
     public double calcularIngresosTotales() {
         Connection conexion = conectar();
         double total = 0.0;

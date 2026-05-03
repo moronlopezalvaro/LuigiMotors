@@ -17,13 +17,30 @@ public class Cita {
         this.idCliente = idCliente;
     }
 
-    public int getIdCita() { return idCita; }
-    public String getFecha() { return fecha; }
-    public String getHora() { return hora; }
-    public String getMatricula() { return matricula; }
-    public String getDescripcion() { return descripcion; }
-    public int getIdCliente() { return idCliente; }
-    
+    public int getIdCita() {
+        return idCita;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public int getIdCliente() {
+        return idCliente;
+    }
+
     @Override
     public String toString() {
         return fecha + " a las " + hora + " - " + matricula;
