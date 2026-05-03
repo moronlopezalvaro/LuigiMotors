@@ -40,6 +40,15 @@ CREATE TABLE citas (
     UNIQUE(fecha, hora)
 );
 
+CREATE TABLE presupuestos (
+    id_presupuesto INT AUTO_INCREMENT PRIMARY KEY,
+    id_cita INT NOT NULL,
+    desglose TEXT NOT NULL,
+    mano_obra DECIMAL(10, 2) NOT NULL,
+    total DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_cita) REFERENCES citas(id_cita) ON DELETE CASCADE
+);
+
 -- insertar datos en las tablas
 INSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES 
 ('12345678A', 'Admin Mecánico', '600111222', 'admin123', 'Administrador'),

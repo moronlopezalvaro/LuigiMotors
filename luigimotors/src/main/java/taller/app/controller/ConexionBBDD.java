@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.File;
 import taller.app.model.Cliente;
 import taller.app.model.Reparacion;
+import taller.app.model.Cita;
+import java.util.List;
+import java.util.ArrayList;
 
 // Clase que gestiona la conexión y todas las operaciones con la base de datos
 public class ConexionBBDD {
@@ -352,6 +355,99 @@ public class ConexionBBDD {
                 return filasAfectadas > 0; // True si la cita se guardó bien
             } catch (SQLException e) {
                 System.out.println("Error al guardar la cita");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
+
+    // Devuelve una lista con las citas de un cliente
+    public List<Cita> obtenerCitasCliente(String nombreCliente) {
+        int idCliente = obtenerIdCliente(nombreCliente);
+        List<Cita> lista = new ArrayList<>();
+        if (idCliente == -1) return lista;
+
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT * FROM citas WHERE id_cliente = ? ORDER BY fecha DESC, hora DESC";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setInt(1, idCliente);
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    Cita c = new Cita(
+                            rs.getInt("id_cita"),
+                            rs.getString("fecha"),
+                            rs.getString("hora"),
+                            rs.getString("matricula"),
+                            rs.getString("descripcion"),
+                            rs.getInt("id_cliente")
+                    );
+                    lista.add(c);
+                }
+
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al obtener citas del cliente");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return lista;
+    }
+
+    // Obtiene el presupuesto de una cita (si existe)
+    public String[] obtenerPresupuesto(int idCita) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT desglose, mano_obra, total FROM presupuestos WHERE id_cita = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setInt(1, idCita);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    String[] presupuesto = new String[3];
+                    presupuesto[0] = rs.getString("desglose");
+                    presupuesto[1] = String.valueOf(rs.getDouble("mano_obra"));
+                    presupuesto[2] = String.valueOf(rs.getDouble("total"));
+                    rs.close();
+                    pstmt.close();
+                    return presupuesto;
+                }
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al obtener presupuesto");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return null;
+    }
+
+    // Guarda un presupuesto generado para una cita
+    public boolean guardarPresupuesto(int idCita, String desglose, double manoObra, double total) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "INSERT INTO presupuestos (id_cita, desglose, mano_obra, total) VALUES (?, ?, ?, ?)";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setInt(1, idCita);
+                pstmt.setString(2, desglose);
+                pstmt.setDouble(3, manoObra);
+                pstmt.setDouble(4, total);
+
+                int filasAfectadas = pstmt.executeUpdate();
+                pstmt.close();
+                return filasAfectadas > 0;
+            } catch (SQLException e) {
+                System.out.println("Error al guardar presupuesto");
                 e.printStackTrace();
             } finally {
                 cerrarConexion(conexion);
