@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
 import taller.app.model.Cliente;
+import taller.app.utils.UIUtils;
+import taller.app.utils.ValidationUtils;
 
 public class VentanaPerfil extends JPanel {
 
@@ -17,9 +19,8 @@ public class VentanaPerfil extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        // Cabecera (estilo consistente con VentanaInicial)
-        JPanel panelTitulo = crearCabecera();
-        add(panelTitulo, BorderLayout.NORTH);
+        // Cabecera con menú unificada
+        add(UIUtils.crearCabeceraConMenu("Luigi Motors", "Mi Perfil:", nombreCliente, this), BorderLayout.NORTH);
 
         // Contenedor Central
         JPanel panelCentral = new JPanel(new GridBagLayout());
@@ -115,30 +116,6 @@ public class VentanaPerfil extends JPanel {
         }
     }
 
-    private JPanel crearCabecera() {
-        JPanel panelTitulo = new JPanel(new BorderLayout());
-        panelTitulo.setOpaque(true);
-        panelTitulo.setBackground(Color.decode("#1E3A5F"));
-        panelTitulo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(15, 20, 10, 20),
-                        BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)),
-                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
-
-        JLabel lblTitulo = new JLabel("Luigi Motors", JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
-        lblTitulo.setForeground(Color.WHITE);
-        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
-
-        JLabel lblSub = new JLabel("Mi Perfil - Gestión de Datos", JLabel.CENTER);
-        lblSub.setFont(new Font("Arial", Font.ITALIC, 14));
-        lblSub.setForeground(Color.decode("#F5F5F5"));
-        lblSub.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        panelTitulo.add(lblSub, BorderLayout.SOUTH);
-
-        return panelTitulo;
-    }
-
     private JLabel createLabel(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("Arial", Font.BOLD, 16));
@@ -185,9 +162,6 @@ public class VentanaPerfil extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        GradientPaint gp = new GradientPaint(0, 0, Color.decode("#F5F5F5"), 0, getHeight(), Color.decode("#D3DEED"));
-        g2.setPaint(gp);
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        UIUtils.pintarFondoDegradado(g, getWidth(), getHeight());
     }
 }
