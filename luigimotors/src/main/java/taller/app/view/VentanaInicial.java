@@ -30,12 +30,22 @@ public class VentanaInicial extends JPanel {
         lblTitulo.setForeground(Color.WHITE);
         panelTitulo.add(lblTitulo, BorderLayout.CENTER);
 
+        // Panel para la segunda línea (Bienvenido + Botón Menú)
+        JPanel panelInferiorTitulo = new JPanel(new BorderLayout());
+        panelInferiorTitulo.setOpaque(false);
+        panelInferiorTitulo.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+
         // mensaje de bienvenida personalizado con el nombre del cliente
         JLabel lblBienvenido = new JLabel("Bienvenido " + nombreCliente);
         lblBienvenido.setFont(new Font("Arial", Font.ITALIC, 14));
         lblBienvenido.setForeground(Color.decode("#F5F5F5")); // Gris claro
-        lblBienvenido.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-        panelTitulo.add(lblBienvenido, BorderLayout.SOUTH);
+        panelInferiorTitulo.add(lblBienvenido, BorderLayout.WEST);
+
+        // Botón de menú hamburguesa (tres rayas)
+        JButton btnMenu = createHamburgerButton();
+        panelInferiorTitulo.add(btnMenu, BorderLayout.EAST);
+
+        panelTitulo.add(panelInferiorTitulo, BorderLayout.SOUTH);
 
         add(panelTitulo, BorderLayout.NORTH);
 
@@ -126,6 +136,59 @@ public class VentanaInicial extends JPanel {
         GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
         g2.setPaint(gp);
         g2.fillRect(0, 0, w, h);
+    }
+
+    private JButton createHamburgerButton() {
+        JButton btn = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Color blanco para las rayas para que resalte sobre el fondo azul
+                g2.setColor(Color.WHITE);
+
+                int w = getWidth();
+                int h = getHeight();
+
+                // Dibujar las tres rayas
+                int thickness = 2;
+                int width = 20;
+                int x = (w - width) / 2;
+
+                g2.fillRect(x, h / 4, width, thickness);
+                g2.fillRect(x, h / 2 - thickness / 2, width, thickness);
+                g2.fillRect(x, 3 * h / 4 - thickness, width, thickness);
+
+                g2.dispose();
+            }
+        };
+
+        btn.setPreferredSize(new Dimension(30, 30));
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Crear el menú desplegable
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem itemDatos = new JMenuItem("Mis datos");
+        JMenuItem itemCitas = new JMenuItem("Mis citas");
+
+        // Estilo básico para los ítems
+        Font menuFont = new Font("Arial", Font.PLAIN, 14);
+        itemDatos.setFont(menuFont);
+        itemCitas.setFont(menuFont);
+
+        popupMenu.add(itemDatos);
+        popupMenu.add(itemCitas);
+
+        // Mostrar el menú al hacer clic
+        btn.addActionListener(e -> {
+            popupMenu.show(btn, btn.getWidth() - popupMenu.getPreferredSize().width, btn.getHeight());
+        });
+
+        return btn;
     }
 
     private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
