@@ -68,7 +68,11 @@ public class VentanaPerfil extends JPanel {
         btnVolver.addActionListener(e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.setContentPane(new VentanaInicial(this.nombreCliente));
+                if ("Administrador".equals(clienteActual.getRol())) {
+                    frame.setContentPane(new VentanaAdministrador(this.nombreCliente));
+                } else {
+                    frame.setContentPane(new VentanaInicial(this.nombreCliente));
+                }
                 frame.revalidate();
                 frame.repaint();
             }

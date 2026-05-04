@@ -101,3 +101,5 @@ INSERT INTO catalogo_reparaciones (nombre, precio_total, mano_obra) VALUES
 ('Sustitución centralita', 500.00, 120.00),
 ('Limpieza filtro partículas (FAP)', 250.00, 100.00),
 ('Cambio catalizador', 600.00, 150.00);
+INSERT INTO Cliente (dni, nombre, telefono, contrasenya, rol) VALUES 
+('12345678Z', 'MANOLO', '666666666', '...', 'Cliente');

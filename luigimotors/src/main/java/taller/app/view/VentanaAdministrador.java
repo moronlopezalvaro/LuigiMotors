@@ -30,12 +30,22 @@ public class VentanaAdministrador extends JPanel {
         lblTitulo.setForeground(Color.WHITE);
         panelTitulo.add(lblTitulo, BorderLayout.CENTER);
 
+        // Panel para la segunda línea (Bienvenido + Botón Menú)
+        JPanel panelInferiorTitulo = new JPanel(new BorderLayout());
+        panelInferiorTitulo.setOpaque(false);
+        panelInferiorTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
         // texto
         JLabel lblBienvenido = new JLabel("Administrador: " + nombreAdmin);
         lblBienvenido.setFont(new Font("Arial", Font.ITALIC, 13));
         lblBienvenido.setForeground(Color.decode("#F5F5F5"));
-        lblBienvenido.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        panelTitulo.add(lblBienvenido, BorderLayout.SOUTH);
+        panelInferiorTitulo.add(lblBienvenido, BorderLayout.WEST);
+
+        // Botón de menú hamburguesa (tres rayas)
+        JButton btnMenu = createHamburgerButton();
+        panelInferiorTitulo.add(btnMenu, BorderLayout.EAST);
+
+        panelTitulo.add(panelInferiorTitulo, BorderLayout.SOUTH);
 
         add(panelTitulo, BorderLayout.NORTH);
 
@@ -457,6 +467,66 @@ public class VentanaAdministrador extends JPanel {
         GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
         g2.setPaint(gp);
         g2.fillRect(0, 0, w, h);
+    }
+
+    private JButton createHamburgerButton() {
+        JButton btn = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(Color.WHITE);
+                int w = getWidth();
+                int h = getHeight();
+                int thickness = 2;
+                int width = 20;
+                int x = (w - width) / 2;
+                g2.fillRect(x, h/4, width, thickness);
+                g2.fillRect(x, h/2 - thickness/2, width, thickness);
+                g2.fillRect(x, 3*h/4 - thickness, width, thickness);
+                g2.dispose();
+            }
+        };
+        btn.setPreferredSize(new Dimension(30, 30));
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem itemDatos = new JMenuItem("Mis datos");
+        JMenuItem itemCitas = new JMenuItem("Mis citas");
+
+        Font menuFont = new Font("Arial", Font.PLAIN, 14);
+        itemDatos.setFont(menuFont);
+        itemCitas.setFont(menuFont);
+
+        popupMenu.add(itemDatos);
+        popupMenu.add(itemCitas);
+
+        itemDatos.addActionListener(e -> {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.setContentPane(new VentanaPerfil(nombreAdmin));
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+
+        itemCitas.addActionListener(e -> {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.setContentPane(new VentanaCitas(nombreAdmin));
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+
+        btn.addActionListener(e -> {
+            popupMenu.show(btn, btn.getWidth() - popupMenu.getPreferredSize().width, btn.getHeight());
+        });
+
+        return btn;
     }
 
     // crea un botón con esquinas redondeadas y efecto hover

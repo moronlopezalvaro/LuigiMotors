@@ -226,7 +226,14 @@ public class VentanaCitas extends JPanel {
     private void volver() {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {
-            frame.setContentPane(new VentanaInicial(nombreCliente));
+            ConexionBBDD bd = new ConexionBBDD();
+            taller.app.model.Cliente c = bd.obtenerClientePorNombre(nombreCliente);
+            
+            if (c != null && "Administrador".equals(c.getRol())) {
+                frame.setContentPane(new VentanaAdministrador(nombreCliente));
+            } else {
+                frame.setContentPane(new VentanaInicial(nombreCliente));
+            }
             frame.revalidate();
             frame.repaint();
         }
