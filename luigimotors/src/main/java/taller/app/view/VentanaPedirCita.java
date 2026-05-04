@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
+import taller.app.utils.ValidationUtils;
 
 // Esta pantalla muestra un formulario para que el cliente pueda pedir una cita.
 public class VentanaPedirCita extends JPanel {
@@ -145,10 +146,26 @@ public class VentanaPedirCita extends JPanel {
                     return;
                 }
 
+                // VALIDACIÓN DE FECHA PASADA
+                if (!ValidationUtils.esFechaFutura(fecha)) {
+                    JOptionPane.showMessageDialog(VentanaPedirCita.this,
+                            "No puedes pedir una cita para una fecha que ya ha pasado.",
+                            "Fecha inválida", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 if (matricula.isEmpty()) {
                     JOptionPane.showMessageDialog(VentanaPedirCita.this,
                             "Por favor, introduce la matrícula de tu vehículo.",
                             "Campo vacío", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                // VALIDACIÓN DE MATRÍCULA
+                if (!ValidationUtils.esMatriculaValida(matricula)) {
+                    JOptionPane.showMessageDialog(VentanaPedirCita.this,
+                            "El formato de la matrícula no es válido.\nEjemplo: 1234ABC",
+                            "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 

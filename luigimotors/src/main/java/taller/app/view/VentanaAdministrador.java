@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
+import taller.app.utils.ValidationUtils;
 
 public class VentanaAdministrador extends JPanel {
 
@@ -122,6 +123,16 @@ public class VentanaAdministrador extends JPanel {
                         return;
                     }
 
+                    // VALIDACIONES
+                    if (!ValidationUtils.esDniValido(dni)) {
+                        JOptionPane.showMessageDialog(VentanaAdministrador.this, "Formato de DNI inválido.", "Error", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    if (!ValidationUtils.esTelefonoValido(telefono)) {
+                        JOptionPane.showMessageDialog(VentanaAdministrador.this, "El teléfono debe tener 9 dígitos.", "Error", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
                     // guardar cliente
                     ConexionBBDD bd = new ConexionBBDD();
                     boolean exito = bd.registrarNuevoCliente(dni, nombre, telefono, contrasena);
@@ -178,6 +189,11 @@ public class VentanaAdministrador extends JPanel {
                             || fecha.isEmpty() || idClienteStr.isEmpty()) {
                         JOptionPane.showMessageDialog(VentanaAdministrador.this,
                                 "Por favor, rellena todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    if (!ValidationUtils.esMatriculaValida(matricula)) {
+                        JOptionPane.showMessageDialog(VentanaAdministrador.this, "Formato de matrícula inválido.", "Error", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
 

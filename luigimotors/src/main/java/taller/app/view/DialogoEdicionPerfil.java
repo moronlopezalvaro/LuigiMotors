@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
 import taller.app.model.Cliente;
+import taller.app.utils.ValidationUtils;
 
 public class DialogoEdicionPerfil extends JDialog {
 
@@ -133,6 +134,17 @@ public class DialogoEdicionPerfil extends JDialog {
 
         if (nombre.isEmpty() || dni.isEmpty() || telefono.isEmpty() || pass.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // VALIDACIONES EXTRAS
+        if (!ValidationUtils.esDniValido(dni)) {
+            JOptionPane.showMessageDialog(this, "El DNI no tiene un formato válido.", "Formato Incorrecto", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (!ValidationUtils.esTelefonoValido(telefono)) {
+            JOptionPane.showMessageDialog(this, "El teléfono debe tener 9 dígitos.", "Formato Incorrecto", JOptionPane.WARNING_MESSAGE);
             return;
         }
 

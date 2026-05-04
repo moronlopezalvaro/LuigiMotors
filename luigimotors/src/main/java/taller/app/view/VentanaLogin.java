@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
+import taller.app.utils.ValidationUtils;
 
 public class VentanaLogin extends JPanel {
 
@@ -230,6 +231,22 @@ public class VentanaLogin extends JPanel {
                 if (dni.isEmpty() || nombre.isEmpty() || telefono.isEmpty() || contrasena.isEmpty()) {
                     JOptionPane.showMessageDialog(contenedor, "Por favor, rellene todos los campos.", "Error",
                             JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // VALIDACIONES EXTRAS
+                if (!ValidationUtils.esDniValido(dni)) {
+                    JOptionPane.showMessageDialog(contenedor, "El DNI no tiene un formato válido (8 números y 1 letra).", "Formato Incorrecto", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (!ValidationUtils.esTelefonoValido(telefono)) {
+                    JOptionPane.showMessageDialog(contenedor, "El teléfono debe tener exactamente 9 dígitos.", "Formato Incorrecto", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (contrasena.length() < 4) {
+                    JOptionPane.showMessageDialog(contenedor, "La contraseña debe tener al menos 4 caracteres.", "Seguridad", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
