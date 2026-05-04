@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
 import taller.app.utils.ValidationUtils;
+import taller.app.utils.UIUtils;
 
 public class VentanaAdministrador extends JPanel {
 
@@ -15,40 +16,8 @@ public class VentanaAdministrador extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        // encabezado
-        JPanel panelTitulo = new JPanel(new BorderLayout());
-        panelTitulo.setOpaque(true);
-        panelTitulo.setBackground(Color.decode("#1E3A5F"));
-        panelTitulo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(15, 20, 10, 20),
-                        BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)),
-                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
-
-        // título
-        JLabel lblTitulo = new JLabel("Luigi Motors · Panel de Administración", JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
-        lblTitulo.setForeground(Color.WHITE);
-        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
-
-        // Panel para la segunda línea (Bienvenido + Botón Menú)
-        JPanel panelInferiorTitulo = new JPanel(new BorderLayout());
-        panelInferiorTitulo.setOpaque(false);
-        panelInferiorTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
-        // texto
-        JLabel lblBienvenido = new JLabel("Administrador: " + nombreAdmin);
-        lblBienvenido.setFont(new Font("Arial", Font.ITALIC, 13));
-        lblBienvenido.setForeground(Color.decode("#F5F5F5"));
-        panelInferiorTitulo.add(lblBienvenido, BorderLayout.WEST);
-
-        // Botón de menú hamburguesa (tres rayas)
-        JButton btnMenu = createHamburgerButton();
-        panelInferiorTitulo.add(btnMenu, BorderLayout.EAST);
-
-        panelTitulo.add(panelInferiorTitulo, BorderLayout.SOUTH);
-
-        add(panelTitulo, BorderLayout.NORTH);
+        // Cabecera con menú unificada
+        add(UIUtils.crearCabeceraConMenu("Luigi Motors · Panel de Administración", "Administrador:", nombreAdmin, this), BorderLayout.NORTH);
 
         // panel botones
         JPanel panelBotones = new JPanel(new GridLayout(8, 1, 0, 15));
@@ -65,14 +34,14 @@ public class VentanaAdministrador extends JPanel {
         Color colorGrisOscuro = Color.decode("#2C2C2C");
 
         // botones
-        JButton btnAnadirCliente = createRoundedButton("Añadir cliente", colorVerde, Color.WHITE);
-        JButton btnAnadirReparacion = createRoundedButton("Añadir reparación", colorNaranja, Color.WHITE);
-        JButton btnEditarReparacion = createRoundedButton("Editar reparación", colorCian, Color.WHITE);
-        JButton btnVerBBDD = createRoundedButton("Ver Base de Datos", colorAzul, Color.WHITE);
-        JButton btnBorrarCliente = createRoundedButton("Borrar cliente", colorRojo, Color.WHITE);
-        JButton btnBuscarReparacion = createRoundedButton("Buscar reparación por cliente", colorMorado, Color.WHITE);
-        JButton btnCalcularIngresos = createRoundedButton("Calcular ingresos", colorAzul, Color.WHITE);
-        JButton btnSalir = createRoundedButton("Salir / Cerrar Sesión", colorGrisOscuro, Color.WHITE);
+        JButton btnAnadirCliente = UIUtils.createRoundedButton("Añadir cliente", colorVerde, Color.WHITE);
+        JButton btnAnadirReparacion = UIUtils.createRoundedButton("Añadir reparación", colorNaranja, Color.WHITE);
+        JButton btnEditarReparacion = UIUtils.createRoundedButton("Editar reparación", colorCian, Color.WHITE);
+        JButton btnVerBBDD = UIUtils.createRoundedButton("Ver Base de Datos", colorAzul, Color.WHITE);
+        JButton btnBorrarCliente = UIUtils.createRoundedButton("Borrar cliente", colorRojo, Color.WHITE);
+        JButton btnBuscarReparacion = UIUtils.createRoundedButton("Buscar reparación por cliente", colorMorado, Color.WHITE);
+        JButton btnCalcularIngresos = UIUtils.createRoundedButton("Calcular ingresos", colorAzul, Color.WHITE);
+        JButton btnSalir = UIUtils.createRoundedButton("Salir / Cerrar Sesión", colorGrisOscuro, Color.WHITE);
 
         // añadir los botones al panel
         panelBotones.add(btnAnadirCliente);
@@ -470,109 +439,10 @@ public class VentanaAdministrador extends JPanel {
         });
     }
 
-    // dibuja el fondo degradado de la ventana
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        int w = getWidth();
-        int h = getHeight();
-        Color color1 = Color.decode("#F5F5F5"); // Gris claro arriba
-        Color color2 = Color.decode("#D3DEED"); // Azul muy suave abajo
-        GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
-        g2.setPaint(gp);
-        g2.fillRect(0, 0, w, h);
+        UIUtils.pintarFondoDegradado(g, getWidth(), getHeight());
     }
 
-    private JButton createHamburgerButton() {
-        JButton btn = new JButton() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
-                int w = getWidth();
-                int h = getHeight();
-                int thickness = 2;
-                int width = 20;
-                int x = (w - width) / 2;
-                g2.fillRect(x, h/4, width, thickness);
-                g2.fillRect(x, h/2 - thickness/2, width, thickness);
-                g2.fillRect(x, 3*h/4 - thickness, width, thickness);
-                g2.dispose();
-            }
-        };
-        btn.setPreferredSize(new Dimension(30, 30));
-        btn.setContentAreaFilled(false);
-        btn.setBorderPainted(false);
-        btn.setFocusPainted(false);
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem itemDatos = new JMenuItem("Mis datos");
-        JMenuItem itemCitas = new JMenuItem("Mis citas");
-
-        Font menuFont = new Font("Arial", Font.PLAIN, 14);
-        itemDatos.setFont(menuFont);
-        itemCitas.setFont(menuFont);
-
-        popupMenu.add(itemDatos);
-        popupMenu.add(itemCitas);
-
-        itemDatos.addActionListener(e -> {
-            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.setContentPane(new VentanaPerfil(nombreAdmin));
-                frame.revalidate();
-                frame.repaint();
-            }
-        });
-
-        itemCitas.addActionListener(e -> {
-            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            if (frame != null) {
-                frame.setContentPane(new VentanaCitas(nombreAdmin));
-                frame.revalidate();
-                frame.repaint();
-            }
-        });
-
-        btn.addActionListener(e -> {
-            popupMenu.show(btn, btn.getWidth() - popupMenu.getPreferredSize().width, btn.getHeight());
-        });
-
-        return btn;
-    }
-
-    // crea un botón con esquinas redondeadas y efecto hover
-    private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
-        JButton btn = new JButton(text) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // cambiar el color según el estado del botón
-                if (getModel().isPressed()) {
-                    g2.setColor(bgColor.darker());
-                } else if (getModel().isRollover()) {
-                    g2.setColor(bgColor.brighter());
-                } else {
-                    g2.setColor(bgColor);
-                }
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
-                super.paintComponent(g2);
-                g2.dispose();
-            }
-        };
-        btn.setContentAreaFilled(false);
-        btn.setFocusPainted(false);
-        btn.setBorderPainted(false);
-        btn.setBackground(bgColor);
-        btn.setForeground(fgColor);
-        btn.setFont(new Font("Arial", Font.BOLD, 15));
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btn.setPreferredSize(new Dimension(0, 50));
-        return btn;
-    }
 }

@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.util.List;
 import taller.app.controller.ConexionBBDD;
 import taller.app.model.Cita;
+import taller.app.utils.UIUtils;
 
 public class VentanaCitas extends JPanel {
 
@@ -21,8 +22,8 @@ public class VentanaCitas extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        // Cabecera
-        add(crearCabecera(), BorderLayout.NORTH);
+        // Cabecera con menú unificada
+        add(UIUtils.crearCabeceraConMenu("Luigi Motors", "Mis Citas:", nombreCliente, this), BorderLayout.NORTH);
 
         // Panel Central
         JPanel panelCentral = new JPanel(new BorderLayout());
@@ -140,29 +141,6 @@ public class VentanaCitas extends JPanel {
         return card;
     }
 
-    private JPanel crearCabecera() {
-        JPanel panelTitulo = new JPanel(new BorderLayout());
-        panelTitulo.setOpaque(true);
-        panelTitulo.setBackground(colorAzulOscuro);
-        panelTitulo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(15, 20, 10, 20),
-                        BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)),
-                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
-
-        JLabel lblTitulo = new JLabel("Luigi Motors", JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 28));
-        lblTitulo.setForeground(Color.WHITE);
-        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
-
-        JLabel lblSub = new JLabel("Gestión de Mis Citas", JLabel.CENTER);
-        lblSub.setFont(new Font("Arial", Font.ITALIC, 14));
-        lblSub.setForeground(Color.decode("#F5F5F5"));
-        lblSub.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        panelTitulo.add(lblSub, BorderLayout.SOUTH);
-
-        return panelTitulo;
-    }
 
     private JButton createFilterButton(String text) {
         JButton btn = new JButton(text) {
@@ -217,10 +195,7 @@ public class VentanaCitas extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        GradientPaint gp = new GradientPaint(0, 0, Color.decode("#F5F5F5"), 0, getHeight(), Color.decode("#D3DEED"));
-        g2.setPaint(gp);
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        UIUtils.pintarFondoDegradado(g, getWidth(), getHeight());
     }
 
     private void volver() {
