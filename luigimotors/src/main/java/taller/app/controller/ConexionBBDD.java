@@ -448,6 +448,62 @@ public class ConexionBBDD {
         return lista;
     }
 
+    // obtiene citas pasadas del cliente
+    public List<Cita> obtenerCitasAnteriores(String nombreCliente) {
+        int idCliente = obtenerIdCliente(nombreCliente);
+        List<Cita> lista = new ArrayList<>();
+        if (idCliente == -1) return lista;
+
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT * FROM citas WHERE id_cliente = ? AND STR_TO_DATE(CONCAT(fecha, ' ', hora), '%Y-%m-%d %H:%i') < NOW() ORDER BY fecha DESC, hora DESC";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setInt(1, idCliente);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    lista.add(new Cita(rs.getInt("id_cita"), rs.getString("fecha"), rs.getString("hora"), rs.getString("matricula"), rs.getString("descripcion"), rs.getInt("id_cliente")));
+                }
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al obtener citas anteriores");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return lista;
+    }
+
+    // obtiene próximas citas del cliente
+    public List<Cita> obtenerCitasProximas(String nombreCliente) {
+        int idCliente = obtenerIdCliente(nombreCliente);
+        List<Cita> lista = new ArrayList<>();
+        if (idCliente == -1) return lista;
+
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT * FROM citas WHERE id_cliente = ? AND STR_TO_DATE(CONCAT(fecha, ' ', hora), '%Y-%m-%d %H:%i') >= NOW() ORDER BY fecha ASC, hora ASC";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setInt(1, idCliente);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    lista.add(new Cita(rs.getInt("id_cita"), rs.getString("fecha"), rs.getString("hora"), rs.getString("matricula"), rs.getString("descripcion"), rs.getInt("id_cliente")));
+                }
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al obtener próximas citas");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return lista;
+    }
+
     // obtiene el presupuesto de una cita (si existe)
     public String[] obtenerPresupuesto(int idCita) {
         Connection conexion = conectar();

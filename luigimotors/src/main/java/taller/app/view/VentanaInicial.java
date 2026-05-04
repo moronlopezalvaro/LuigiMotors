@@ -193,6 +193,16 @@ public class VentanaInicial extends JPanel {
             }
         });
 
+        // Acción para "Mis citas"
+        itemCitas.addActionListener(e -> {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.setContentPane(new VentanaCitas(nombreCliente));
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+
         // Mostrar el menú al hacer clic
         btn.addActionListener(e -> {
             popupMenu.show(btn, btn.getWidth() - popupMenu.getPreferredSize().width, btn.getHeight());
