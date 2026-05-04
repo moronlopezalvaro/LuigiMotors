@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import taller.app.controller.ConexionBBDD;
 import taller.app.model.Cita;
+import taller.app.utils.UIUtils;
 
 public class VentanaGastos extends JPanel {
 
@@ -19,16 +20,8 @@ public class VentanaGastos extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        JPanel panelTitulo = new JPanel(new BorderLayout());
-        panelTitulo.setOpaque(true);
-        panelTitulo.setBackground(Color.decode("#1E3A5F"));
-        panelTitulo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        JLabel lblTitulo = new JLabel("Mis Presupuestos", JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 24));
-        lblTitulo.setForeground(Color.WHITE);
-        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
-        add(panelTitulo, BorderLayout.NORTH);
+        // Cabecera con menú unificada
+        add(UIUtils.crearCabeceraConMenu("Luigi Motors", "Mis Presupuestos:", nombreCliente, this), BorderLayout.NORTH);
 
         // lista de citas
         JPanel panelCentral = new JPanel(new BorderLayout());
@@ -258,10 +251,6 @@ public class VentanaGastos extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        int w = getWidth(), h = getHeight();
-        GradientPaint gp = new GradientPaint(0, 0, Color.decode("#F5F5F5"), 0, h, Color.decode("#D3DEED"));
-        g2.setPaint(gp);
-        g2.fillRect(0, 0, w, h);
+        UIUtils.pintarFondoDegradado(g, getWidth(), getHeight());
     }
 }

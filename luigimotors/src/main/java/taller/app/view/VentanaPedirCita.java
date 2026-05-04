@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import taller.app.controller.ConexionBBDD;
 import taller.app.utils.ValidationUtils;
+import taller.app.utils.UIUtils;
 
 // Esta pantalla muestra un formulario para que el cliente pueda pedir una cita.
 public class VentanaPedirCita extends JPanel {
@@ -16,20 +17,8 @@ public class VentanaPedirCita extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        JPanel panelTitulo = new JPanel(new BorderLayout());
-        panelTitulo.setOpaque(true);
-        panelTitulo.setBackground(Color.decode("#1E3A5F"));
-        panelTitulo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(15, 20, 10, 20),
-                        BorderFactory.createLineBorder(Color.decode("#2C2C2C"), 2)),
-                BorderFactory.createEmptyBorder(15, 20, 15, 20)));
-
-        JLabel lblTitulo = new JLabel("Pedir Cita", JLabel.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
-        lblTitulo.setForeground(Color.WHITE);
-        panelTitulo.add(lblTitulo, BorderLayout.CENTER);
-        add(panelTitulo, BorderLayout.NORTH);
+        // Cabecera con menú unificada
+        add(UIUtils.crearCabeceraConMenu("Luigi Motors", "Pedir Cita:", nombreCliente, this), BorderLayout.NORTH);
 
         // formulario para pedir cita
         JPanel panelFormulario = new JPanel(new GridBagLayout());
@@ -226,15 +215,7 @@ public class VentanaPedirCita extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        int w = getWidth();
-        int h = getHeight();
-        Color color1 = Color.decode("#F5F5F5");
-        Color color2 = Color.decode("#D3DEED");
-        GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
-        g2.setPaint(gp);
-        g2.fillRect(0, 0, w, h);
+        UIUtils.pintarFondoDegradado(g, getWidth(), getHeight());
     }
 
     private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
