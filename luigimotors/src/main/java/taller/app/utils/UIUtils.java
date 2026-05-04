@@ -71,7 +71,7 @@ public class UIUtils {
         btn.setToolTipText("Menú de opciones");
 
         JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem itemDatos = new JMenuItem("Mis datos");
+        JMenuItem itemDatos = new JMenuItem("Mi perfil");
         JMenuItem itemCitas = new JMenuItem("Mis citas");
 
         Font menuFont = new Font("Arial", Font.PLAIN, 14);
