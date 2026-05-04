@@ -183,6 +183,16 @@ public class VentanaInicial extends JPanel {
         popupMenu.add(itemDatos);
         popupMenu.add(itemCitas);
 
+        // Acción para "Mis datos"
+        itemDatos.addActionListener(e -> {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.setContentPane(new VentanaPerfil(nombreCliente));
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+
         // Mostrar el menú al hacer clic
         btn.addActionListener(e -> {
             popupMenu.show(btn, btn.getWidth() - popupMenu.getPreferredSize().width, btn.getHeight());

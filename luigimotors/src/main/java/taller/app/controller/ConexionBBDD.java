@@ -287,6 +287,65 @@ public class ConexionBBDD {
         return -1; // -1 significa que no se encontró el cliente
     }
 
+    // obtiene un objeto Cliente completo buscando por su nombre
+    public Cliente obtenerClientePorNombre(String nombre) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "SELECT * FROM cliente WHERE nombre = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, nombre);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    Cliente c = new Cliente(
+                            rs.getInt("id_cliente"),
+                            rs.getString("dni"),
+                            rs.getString("nombre"),
+                            rs.getString("telefono"),
+                            rs.getString("contrasenya"),
+                            rs.getString("rol"));
+                    rs.close();
+                    pstmt.close();
+                    return c;
+                }
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("Error al obtener cliente por nombre");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return null;
+    }
+
+    // actualiza los datos de un cliente en la BD
+    public boolean actualizarDatosCliente(Cliente c, String nombreOriginal) {
+        Connection conexion = conectar();
+        if (conexion != null) {
+            try {
+                String consulta = "UPDATE cliente SET dni = ?, nombre = ?, telefono = ?, contrasenya = ? WHERE nombre = ?";
+                PreparedStatement pstmt = conexion.prepareStatement(consulta);
+                pstmt.setString(1, c.getDni());
+                pstmt.setString(2, c.getNombre());
+                pstmt.setString(3, c.getTelefono());
+                pstmt.setString(4, c.getContrasenya());
+                pstmt.setString(5, nombreOriginal);
+
+                int filas = pstmt.executeUpdate();
+                pstmt.close();
+                return filas > 0;
+            } catch (SQLException e) {
+                System.out.println("Error al actualizar datos del cliente");
+                e.printStackTrace();
+            } finally {
+                cerrarConexion(conexion);
+            }
+        }
+        return false;
+    }
+
     // comprueba si ya hay una cita en esa fecha y hora (para evitar duplicados)
     public boolean citaOcupada(String fecha, String hora) {
         Connection conexion = conectar();
